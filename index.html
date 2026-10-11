@@ -2294,7 +2294,7 @@ document.getElementById('btnConfirmEdit').onclick=confirmEdit;
 document.getElementById('btnPrintEdit').onclick=function(){if(!state.detail||!state.detail.item)return;var _c2=state.detail.item.code;if(!isStation_()){enqueueRemotePrint_([_c2]).then(function(){msg('msgEdit','Đã gửi '+_c2+' tới trạm in — chờ laptop in.',true);}).catch(function(e){msg('msgEdit',(e&&e.message)||'Không gửi được lệnh in.');});return;}doPrint(_c2);};
 document.getElementById('btnBackEdit').onclick=function(){document.getElementById('editModal').classList.remove('open');};
 document.getElementById('btnCloseEdit').onclick=function(){document.getElementById('editModal').classList.remove('open');};
-document.getElementById('scanMain').addEventListener('keydown',function(e){if(e.key==='Enter'){var v=e.target.value.trim();state.filter='';renderGrid();openDetail(v);}});
+document.getElementById('scanMain').addEventListener('keydown',function(e){if(e.key!=='Enter')return;e.preventDefault();var v=e.target.value.trim();state.filter=v;syncScanClear();renderGrid();var m=state.items.filter(function(x){return x.code===v;})[0];if(m)openDetail(m.code);});
 document.getElementById('scanLiq').addEventListener('keydown',function(e){if(e.key==='Enter'){liqAdd(e.target.value.trim());e.target.value='';}});
 document.getElementById('btnNext').onclick=liqToStep2;
 document.getElementById('btnLiqBack').onclick=liqToStep1;
