@@ -3,7 +3,7 @@ const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
 
-// KHỚP client index.html: pager mobile 50 don/trang + tu an hien khi cuon (mockup v14 duyet).
+// KHỚP client index.html: pager mobile 50 don/trang + cuon an/hien muot (mockup v15 duyet).
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const MOB_PAGE = 50;
 function pageSlice(list, page) {
@@ -36,6 +36,8 @@ test('mob-pager: DOM + CSS mobile', () => {
   assert.ok(html.includes('#rangebar .rg-l1{flex:none}'), 'Display Range mobile phai 1 hang');
   assert.ok(html.includes("document.getElementById('navCreate').onclick=document.getElementById('btnCreateTop').onclick"), 'navCreate phai mo form Create');
   assert.ok(html.includes('pgList.forEach'), 'renderGrid phai render theo lat trang');
-  assert.ok(html.includes('body.hidebars header .scanbar'), 'mobile cuon xuong phai an search/range/pills');
-  assert.ok(html.includes("window.addEventListener('scroll'"), 'thieu listener huong cuon');
+  assert.ok(html.includes('id="mHide"'), 'thieu wrapper thu gon header');
+  assert.ok(html.includes('body.hidebars #mHide'), 'mobile cuon xuong phai an search/range/pills');
+  assert.ok(html.includes('grid-template-rows'), 'thu gon phai dung grid 0fr/1fr cho muot');
+  assert.ok(html.includes('requestAnimationFrame(_applyHide_)'), 'scroll phai gom qua rAF');
 });
