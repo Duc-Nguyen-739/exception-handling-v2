@@ -360,8 +360,12 @@ def map_backlog_row(keys, values):
 
 
 def fmt_cogs(v):
-    # KHỚP client blFmtCogs: nhóm nghìn để dễ đọc.
+    # KHỚP client blFmtCogs/blCogsDigits: nhóm nghìn để dễ đọc.
+    # COGS VND không quá 999 tỷ: dãy >12 số là bản scale x1e9 lỗi
+    # (đuôi 004 do vượt 2^53) -> bỏ 9 số cuối rồi mới nhóm.
     d = re.sub(r"[^0-9]", "", str(v if v is not None else ""))
     if not d:
         return str(v if v is not None else "")
+    if len(d) > 12:
+        d = d[:-9].lstrip("0") or "0"
     return "{:,}".format(int(d))

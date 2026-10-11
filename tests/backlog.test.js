@@ -3,9 +3,14 @@ const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
 
-// Mirror: client blFmtCogs (nhóm nghìn) + blFmtUpd (B1 -> dd/MM/yyyy).
-function blFmtCogs(v) {
+// Mirror: client blFmtCogs/blCogsDigits (nhóm nghìn + bỏ scale x1e9 khi >12 số) + blFmtUpd (B1 -> dd/MM/yyyy).
+function blCogsDigits(v) {
   var d = String(v == null ? '' : v).replace(/[^0-9]/g, '');
+  if (d.length > 12) d = d.slice(0, -9).replace(/^0+/, '') || '0';
+  return d;
+}
+function blFmtCogs(v) {
+  var d = blCogsDigits(v);
   if (!d) return String(v == null ? '' : v);
   return d.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
@@ -17,6 +22,9 @@ function blFmtUpd(s) {
 test('backlog: fmt helpers — COGS + UpdatedAt', () => {
   assert.strictEqual(blFmtCogs('1334565'), '1,334,565');
   assert.strictEqual(blFmtCogs('35000'), '35,000');
+  assert.strictEqual(blFmtCogs('28,890,000'), '28,890,000');
+  assert.strictEqual(blFmtCogs('999999999999'), '999,999,999,999');
+  assert.strictEqual(blFmtCogs('28890000000000004'), '28,890,000');
   assert.strictEqual(blFmtCogs(''), '');
   assert.strictEqual(blFmtUpd('2026-10-10 18:53:19'), '10/10/2026 18:53:19');
   assert.strictEqual(blFmtUpd('10/10/2026 18:53:19'), '10/10/2026 18:53:19');

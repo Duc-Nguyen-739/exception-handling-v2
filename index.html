@@ -2329,9 +2329,11 @@ var BL_TIP={product_name:1,last_touch_by:1,pickup_station_name:1};
 var BL_FCOL={status_desc:1,aging_leadtime:1},BL_SCOL={product_name:1,return_sort_code:1,buyer_sort_code:1};
 function blTitle(k){var i=blKeys.indexOf(k);return(i>=0&&blTitles[i])?blTitles[i]:k;}
 function blFmtUpd(s){var m=String(s||'').match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{2}:\d{2}(?::\d{2})?)/);return m?(m[3]+'/'+m[2]+'/'+m[1]+' '+m[4]):String(s||'');}
-function blFmtCogs(v){var d=String(v==null?'':v).replace(/[^0-9]/g,'');if(!d)return String(v==null?'':v);return d.replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function blCogsDigits(v){var d=String(v==null?'':v).replace(/[^0-9]/g,'');if(d.length>12)d=d.slice(0,-9).replace(/^0+/,'')||'0';return d;}
+// COGS VND khong qua 999 ty: day >12 so la ban scale x1e9 loi (duoi 004 do vuot 2^53) -> bo 9 so cuoi.
+function blFmtCogs(v){var d=blCogsDigits(v);if(!d)return String(v==null?'':v);return d.replace(/\B(?=(\d{3})+(?!\d))/g,',');}
 function blAgingH(s){var t=String(s||'').toLowerCase();var m=t.match(/[\d.]+/);var v=m?parseFloat(m[0]):9999;if(t.indexOf('day')>=0)v=v*24;return v;}
-function blSortVal(k,v){var s=String(v==null?'':v);if(k==='cogs'){var d=s.replace(/[^0-9]/g,'');return d?parseInt(d,10):-1;}if(k==='aging_leadtime')return blAgingH(s);if(/time$|_at$/.test(k)){var t=Date.parse(s.replace(' ','T'));return isNaN(t)?-1:t;}return s.toLocaleLowerCase();}
+function blSortVal(k,v){var s=String(v==null?'':v);if(k==='cogs'){var d=blCogsDigits(s);return d?parseInt(d,10):-1;}if(k==='aging_leadtime')return blAgingH(s);if(/time$|_at$/.test(k)){var t=Date.parse(s.replace(' ','T'));return isNaN(t)?-1:t;}return s.toLocaleLowerCase();}
 function blSetColOpen(o){blColOpen=o;var b=document.getElementById('blColBtn');b.innerHTML=o?'Cột &lt;':'Cột &gt;';b.classList.toggle('open',o);document.getElementById('blScroll').classList.toggle('show',o);}
 function showBacklog(on){
 document.getElementById('viewBacklog').style.display=on?'block':'none';

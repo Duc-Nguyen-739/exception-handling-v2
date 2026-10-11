@@ -272,6 +272,9 @@ class TestBacklog(unittest.TestCase):
     def test_fmt_cogs(self):
         self.assertEqual(fmt_cogs("1334565"), "1,334,565")
         self.assertEqual(fmt_cogs("35000"), "35,000")
+        self.assertEqual(fmt_cogs("28,890,000"), "28,890,000")
+        self.assertEqual(fmt_cogs("999999999999"), "999,999,999,999")
+        self.assertEqual(fmt_cogs("28890000000000004"), "28,890,000")
         self.assertEqual(fmt_cogs(""), "")
         self.assertIsNone(fmt_cogs(None) or None)
 
