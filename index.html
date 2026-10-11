@@ -10,7 +10,7 @@
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-:root{--o:#ee4d2d;--tint:#fff5f0;--navy:#172b48;--ink:#303844;--mut:#97a0ad;--line:#eef0f3;--bg:#f5f6f9;--card:#fff;--green:#11c964;--blue:#3274f7;--amber:#f79009;--t2:#e9faf0;--t3:#eef4ff;--t4:#fff4e5}
+:root{--o:#ee4d2d;--tint:#fff5f0;--navy:#172b48;--ink:#303844;--mut:#97a0ad;--line:#eef0f3;--bg:#f5f6f9;--card:#fff;--green:#11c964;--blue:#3274f7;--amber:#f79009;--t2:#e9faf0;--t3:#eef4ff;--t4:#fff4e5;--glass:rgba(255,255,255,.62);--glass-line:rgba(255,255,255,.8);--glass-soft:rgba(255,255,255,.45);--glass-blur:16px;--r-md:16px;--r-lg:24px;--glass-sh:0 8px 32px rgba(35,42,69,.10);--mesh:radial-gradient(900px 500px at 12% -8%,#dfe4ff,transparent),radial-gradient(800px 480px at 95% 8%,#ffe3f1,transparent),radial-gradient(900px 600px at 60% 110%,#d9f8ef,transparent)}
 *{box-sizing:border-box}
 body{margin:0;font-family:'Be Vietnam Pro',system-ui,Roboto,Arial;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 button{cursor:pointer;font-family:inherit;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 13px;font-size:12.5px;font-weight:700;color:var(--navy)}
@@ -539,6 +539,19 @@ header{flex-wrap:wrap}
 #viewBacklog .fdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--o);margin-left:5px;vertical-align:middle}
 #blDetail .kv b .hiddenTag{font-size:9px;font-weight:800;background:var(--bg);color:var(--mut);border-radius:6px;padding:2px 6px;margin-left:6px;white-space:nowrap}
 @media(max-width:899px){#navBacklog{display:none}}
+/* T4 Glass Float (gallery v6 T4): kinh mo + mesh 3 lop + bo lon; card KHONG blur de mobile 50 card khong giat */
+body{background:var(--mesh),#eef1fb;background-attachment:fixed}
+header{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border-bottom:1px solid var(--glass-line)}
+header .search-group{background:var(--glass);border-radius:var(--r-md)}
+#rangebar{background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-md)}
+.card{background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-md);box-shadow:var(--glass-sh)}
+.card .cap{border-top:1px solid var(--glass-soft)}
+.sheet{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border:1px solid var(--glass-line)}
+#createModal .sheet,#printKindModal .sheet,#introModal .sheet,#editModal .sheet,#fbModal .sheet{border-radius:var(--r-lg)}
+#viewBacklog .bl-meta,#viewBacklog .colbar,#viewBacklog .pager{background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-md)}
+#viewLiq .lscanrow,#viewLiq .lempty,#viewLiq .ltblwrap,#viewLiq #liqCodeWrap{background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-md)}
+@media(max-width:899px){.sheet{border-radius:var(--r-lg)}.bnav{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border-top:1px solid var(--glass-line)}#gridPager{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border-top:1px solid var(--glass-line);border-bottom:1px solid var(--glass-line)}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){header{background:var(--card)}.sheet{background:var(--card)}#gridPager{background:var(--card)}@media(max-width:899px){.bnav{background:var(--card)}}}
 </style>
 </head>
 <body>
