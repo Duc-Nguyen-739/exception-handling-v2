@@ -1206,15 +1206,21 @@ addBtn(String(p),p,p===state.uiPage,false);
 }
 addBtn('›',state.uiPage+1,false,false);
 }
-var _lastY=0,_tick=false;
+var _lastY=0,_tick=false,_hideLock=0;
+function _setHide_(on){
+if(document.body.classList.contains('hidebars')===on)return;
+document.body.classList.toggle('hidebars',on);
+_hideLock=Date.now()+350;
+}
 function _applyHide_(){
 _tick=false;
 try{
 var y=window.scrollY||0,dy=y-_lastY;
-if(!mobPaged_()){document.body.classList.remove('hidebars');}
-else if(y>80&&dy>8)document.body.classList.add('hidebars');
-else if(dy<-2||y<=80)document.body.classList.remove('hidebars');
 _lastY=y;
+if(y<0||Date.now()<_hideLock)return;
+if(!mobPaged_()){_setHide_(false);}
+else if(y>80&&dy>8)_setHide_(true);
+else if(dy<-2||y<=80)_setHide_(false);
 }catch(e){}
 }
 window.addEventListener('scroll',function(){if(!_tick){_tick=true;requestAnimationFrame(_applyHide_);}},{passive:true});
