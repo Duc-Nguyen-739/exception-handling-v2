@@ -169,11 +169,13 @@ header .search-group input{flex:1;min-width:0;margin:0;text-align:center}
 #liqTotalTop{font-size:12.5px;font-weight:800;color:var(--navy)}
 #liqTotalTop b{color:var(--o)}
 @media(max-width:899px){.pills{flex-wrap:nowrap;gap:5px;overflow:hidden}.pill{flex:1 1 0;min-width:0;justify-content:center;padding:5px 4px;font-size:10px;gap:4px;overflow:hidden}.pill .n{font-size:9px;padding:1px 6px;flex:none}.pill:last-child{flex:0 0 auto;padding:5px 10px}}
-/* ===== mobile: nut Tao moi giua nav + pager 20/trang (KHOP mockup v5 duyet) ===== */
+/* ===== mobile: nut Tao moi giua nav + pager 50/trang + tu an hien khi cuon (KHOP mockup v14 duyet) ===== */
 #navCreate,#gridPager{display:none}
 @media(max-width:899px){#btnCreateMain{display:none!important}#btnPrintMain{display:none!important}#navCreate{display:flex;flex:1;border:none;background:transparent;cursor:pointer;flex-direction:column;align-items:center;gap:2px;min-width:0;margin-top:-27px;padding:0 2px 8px;font-size:10.5px;font-weight:700;color:#5b6572}#navCreate .dot{width:54px;height:54px;border-radius:50%;background:var(--blue);color:#fff;font-size:28px;line-height:1;display:grid;place-items:center;box-shadow:0 6px 16px rgba(50,116,247,.5);border:3px solid #fff}#navCreate:active .dot{transform:scale(.93)}#rangebar .rg-line{flex-wrap:nowrap;gap:6px}#rangebar .rg-l1{flex:none}#rangebar .rg-cap{display:block;white-space:normal;text-align:center;font-size:10px}#gridPager{display:flex;align-items:center;gap:8px;background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px 10px;font-size:10px;font-weight:600;color:var(--mut);position:fixed;left:0;right:0;bottom:72px;z-index:15;box-shadow:0 -6px 20px rgba(23,43,72,.10)}#gridPager .pg-info{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#gridPager .pg-info b{color:var(--navy)}#gridPager .pg-btns{display:flex;gap:4px;flex:none}#gridPager .pg-btns button{min-width:28px;min-height:28px;border:1px solid var(--line);background:#fff;border-radius:7px;font-size:11px;font-weight:800;color:var(--navy);padding:0 7px}#gridPager .pg-btns button.cur{background:var(--navy);border-color:var(--navy);color:#fff}#gridPager .pg-btns button:disabled{opacity:.4}main{padding-bottom:150px}}
 @media(max-width:899px){#pillsRow{overflow:visible;margin-top:12px}#pillsRow .pill{flex:1 1 0;min-width:0;white-space:nowrap;position:relative;overflow:visible;padding:7px 3px 6px;font-size:10px;gap:3px}#pillsRow .pill .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}#pillsRow .pill .n{position:absolute;top:-5px;right:10px;z-index:2;font-size:8px;line-height:1.5;padding:0 5px;background:#fff;border:1px solid var(--line);box-shadow:0 1px 4px rgba(23,43,72,.2)}#pillsRow .pill:last-child{flex:0 0 auto;padding:6px 9px}#pillsRow .pill.on .n{background:rgba(255,255,255,.28);color:#fff;border-color:rgba(255,255,255,.55)}}
 @media(min-width:900px){#navCreate{display:none!important}#gridPager{display:none!important}}
+/* ===== mobile: cuon xuong an het chi con hang logo, cuon len hien ngay (KHOP mockup v14 duyet) ===== */
+@media(max-width:899px){header .scanbar,header #rangebar,header #pillsRow,header #ctxBar{overflow:hidden;max-height:400px;opacity:1;transition:max-height .25s ease,opacity .22s ease,margin .25s ease,padding .25s ease}body.hidebars header .scanbar,body.hidebars header #rangebar,body.hidebars header #pillsRow,body.hidebars header #ctxBar{max-height:0!important;opacity:0;margin-top:0!important;margin-bottom:0!important;padding-top:0!important;padding-bottom:0!important;border-top:none;border-bottom:none}#gridPager,.bnav{transition:transform .25s ease,opacity .22s ease}body.hidebars #gridPager,body.hidebars .bnav{transform:translateY(130%);opacity:0;pointer-events:none}}
 
 /* ===== gallery grid (kiểu AppSheet: ảnh vuông + caption) ===== */
 #grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
@@ -620,7 +622,7 @@ header{flex-wrap:wrap}
 <div class="createrow"><button id="btnCreate" class="primary">＋ Create</button></div>
 </div>
 <div class="msg" id="msgMain"></div>
-<div id="gridPager" style="display:none"><span class="pg-info">Trang <b id="pgCur">1</b> · 20 đơn</span><span class="pg-btns" id="pgBtns"></span></div>
+<div id="gridPager" style="display:none"><span class="pg-info">Trang <b id="pgCur">1</b> · <b id="pgSize">50</b> đơn</span><span class="pg-btns" id="pgBtns"></span></div>
 <div id="grid"></div><div id="gridMore" style="height:2px"></div>
 </main>
 
@@ -1175,14 +1177,14 @@ try{
 try{scheduleVisibleWarm();}catch(e){}
 }
 
-var MOB_PAGE=20;
+var MOB_PAGE=50;
 function mobPaged_(){try{return !!window.matchMedia&&matchMedia('(max-width:899px)').matches;}catch(e){return false;}}
 function pgKey_(vis){return [state.filter||'',state.statusFilter||'',state.kinds.Box,state.kinds.Item,state.range&&state.range.f,state.range&&state.range.t,vis.length].join('|');}
 function gotoPage_(p){
 var pages=Math.max(1,Math.ceil(visibleItems().length/MOB_PAGE));
 if(p>pages&&!state.noMore){msg('msgMain','Đang tải thêm…',true);loadGrid({more:true,silent:true});return;}
 state.uiPage=Math.min(Math.max(1,p),pages);
-renderGrid();window.scrollTo(0,0);
+renderGrid();try{document.body.classList.remove('hidebars');}catch(e){}window.scrollTo(0,0);
 }
 function renderPager_(vis){
 var pg=document.getElementById('gridPager');if(!pg)return;
@@ -1191,6 +1193,7 @@ pg.style.display='';
 var pages=Math.max(1,Math.ceil(vis.length/MOB_PAGE));
 state.uiPage=Math.min(Math.max(1,state.uiPage||1),pages);
 document.getElementById('pgCur').textContent=state.uiPage;
+document.getElementById('pgSize').textContent=MOB_PAGE;
 var box=document.getElementById('pgBtns');box.innerHTML='';
 function addBtn(label,page,cur,dis){var b=document.createElement('button');b.type='button';b.textContent=label;if(cur)b.className='cur';if(dis)b.disabled=true;b.onclick=function(){gotoPage_(page);};box.appendChild(b);}
 addBtn('‹',state.uiPage-1,false,state.uiPage<=1);
@@ -1200,6 +1203,16 @@ addBtn(String(p),p,p===state.uiPage,false);
 }
 addBtn('›',state.uiPage+1,false,false);
 }
+var _lastY=0;
+window.addEventListener('scroll',function(){
+try{
+if(!mobPaged_()){document.body.classList.remove('hidebars');_lastY=window.scrollY||0;return;}
+var y=window.scrollY||0;
+if(y-_lastY>6&&y>80)document.body.classList.add('hidebars');
+else if(_lastY-y>2)document.body.classList.remove('hidebars');
+_lastY=y;
+}catch(e){}
+},{passive:true});
 function phBox(label,url){
 if(!url)return '<div class="kvImg"><b>'+esc(label)+'</b><div class="ph"><div class="fb"><span class="big">\uD83D\uDCC6</span><span>Không có ảnh</span></div></div></div>';
 return '<div class="kvImg"><b>'+esc(label)+'</b><div class="ph" data-url="'+esc(url)+'"><img data-ph loading="lazy" src="'+esc(cachedSrc(url))+'"></div></div>';
