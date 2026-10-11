@@ -40,5 +40,6 @@ test('mob-pager: DOM + CSS mobile', () => {
   assert.ok(html.includes('body.hidebars #mHide'), 'mobile cuon xuong phai an search/range/pills');
   assert.ok(html.includes('grid-template-rows'), 'thu gon phai dung grid 0fr/1fr cho muot');
   assert.ok(html.includes('requestAnimationFrame(_applyHide_)'), 'scroll phai gom qua rAF');
+  assert.ok(html.includes('if(y<0||Date.now()<_hideLock)return;'), 'thieu guard iOS bounce + khoa chong nhap nhay');
   assert.ok(html.includes('.mh-clip{display:block'), 'mobile phai tat display:contents cua lop kep chieu cao');
 });
