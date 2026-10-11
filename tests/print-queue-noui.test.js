@@ -62,7 +62,7 @@ test('print-queue-noui: phone enqueue, laptop direct, khong doi DOM/CSS', () => 
     assert.ok(!html.includes(bad), 'cam them UI moi: ' + bad);
   }
   assert.ok(!html.includes('.printOnly{display:none'), 'nut In Ma detail/edit phai hien tren mobile');
-  assert.ok(!html.includes('#btnPrintMain,#btnPrintTop{display:none'), 'nut In Ma rangebar phai hien tren mobile');
+  assert.ok(html.includes('#btnPrintMain{display:none!important}'), 'mockup 03: an nut In Ma rangebar tren mobile');
   assert.ok(html.includes('btnPrintMain') && html.includes('btnPrintTop') && html.includes('scanPrint'), 'nut In Ma cu phai con nguyen');
 });
 
