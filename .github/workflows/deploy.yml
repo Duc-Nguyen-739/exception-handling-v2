@@ -73,9 +73,13 @@ jobs:
               } catch (e) { process.stdout.write(''); }
             });
           ")
+          # Uu tien deployment production da ghim (secret GAS_DEPLOYMENT_ID lay tu URL /exec).
+          if [ -n "${{ secrets.GAS_DEPLOYMENT_ID }}" ]; then
+            DEPLOY_ID="${{ secrets.GAS_DEPLOYMENT_ID }}"
+          fi
           if [ -z "$DEPLOY_ID" ]; then
             echo "Khong tim thay deployment versioned — bo qua deploy"
             exit 0
           fi
           clasp redeploy "$DEPLOY_ID" --versionNumber "$VERSION" --description "auto $(git rev-parse --short HEAD)"
-          echo "REDEPLOYED version $VERSION to deployment $DEPLOY_ID"
+          echo "REDEPLOYED version $VERSION"

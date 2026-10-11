@@ -3,7 +3,7 @@
 GAS WebApp xử lý ngoại lệ (mất bill SPX): tạo mã Box/Item nội bộ, lưu ảnh Drive, Resolve bill, Thanh Lý theo lô, in QR, quét camera + súng.
 
 Workflows giống repo `spx-diem-danh`:
-- `.github/workflows/deploy.yml` — push `main` → `clasp push` + tạo version + redeploy production `/exec` (cần secrets `GAS_SCRIPT_ID`, `CLASPRC_JSON`).
+- `.github/workflows/deploy.yml` — push `main` → `clasp push` + tạo version + redeploy production `/exec` (cần secrets `GAS_SCRIPT_ID`, `CLASPRC_JSON`, `GAS_DEPLOYMENT_ID`).
 - `.github/workflows/test.yml` — CI gate: `npm test` + Python `unittest` + `build:local` + `test:chrome`.
 
 ## Setup sau khi tạo repo
@@ -11,6 +11,7 @@ Workflows giống repo `spx-diem-danh`:
 1. Vào repo Settings → Secrets and variables → Actions → New repository secret:
    - `GAS_SCRIPT_ID` = ID Apps Script project (đã set sẵn khi tạo repo).
    - `CLASPRC_JSON` = nội dung `~/.clasprc.json` (copy từ máy đã `clasp login`, hoặc từ repo cũ).
+   - `GAS_DEPLOYMENT_ID` = ID deployment production (đoạn giữa `/s/` và `/exec` trong URL `/exec` đang dùng — để CI redeploy đúng bản production).
 2. Push lên `main` → kiểm tra tab Actions (Deploy + Test chạy).
 3. Mở Apps Script project → Deploy → kiểm tra `/exec` đã lên version mới.
 
