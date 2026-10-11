@@ -176,7 +176,7 @@ header .search-group input{flex:1;min-width:0;margin:0;text-align:center}
 @media(min-width:900px){#navCreate{display:none!important}#gridPager{display:none!important}}
 /* ===== mobile: cuon an/hien muot — 1 wrapper grid 0fr/1fr + opacity, day truot transform (KHOP mockup v15 duyet) ===== */
 #mHide,.mh-clip,.mh-pad{display:contents}
-@media(max-width:899px){#mHide{display:grid;grid-column:1/-1;grid-row:2;grid-template-columns:minmax(0,1fr);grid-template-rows:1fr;opacity:1;transition:grid-template-rows .28s ease,opacity .22s ease}.mh-clip{min-height:0;min-width:0;overflow:hidden}.mh-pad{display:flex;flex-direction:column;gap:4px;min-width:0}#mHide #ctxBar{align-self:flex-start}body.hidebars #mHide{grid-template-rows:0fr;opacity:0}#gridPager,.bnav{transition:transform .22s ease-out,opacity .2s ease}body.hidebars #gridPager,body.hidebars .bnav{transform:translateY(130%);opacity:0;pointer-events:none}}
+@media(max-width:899px){#mHide{display:grid;grid-column:1/-1;grid-row:2;grid-template-columns:minmax(0,1fr);grid-template-rows:1fr;opacity:1;transition:grid-template-rows .28s ease,opacity .22s ease}.mh-clip{display:block;min-height:0;min-width:0;overflow:hidden}.mh-pad{display:flex;flex-direction:column;gap:4px;min-width:0}#mHide #ctxBar{align-self:flex-start}body.hidebars #mHide{grid-template-rows:0fr;opacity:0}#gridPager,.bnav{transition:transform .22s ease-out,opacity .2s ease}body.hidebars #gridPager,body.hidebars .bnav{transform:translateY(130%);opacity:0;pointer-events:none}}
 
 /* ===== gallery grid (kiểu AppSheet: ảnh vuông + caption) ===== */
 #grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}

@@ -666,6 +666,18 @@ async function main() {
     const dg = await evalIn(ws, `(function(){var d=document.getElementById('__probe');return d&&d.getAttribute('data-msg')||'';})()`);
     check('Anh loi hien chan doan [loai]+rev thay vi chu chung chung',
       !!(dgOk && /thiếu mã ảnh/.test(dg.value || '') && /r\d{8}[a-z]/.test(dg.value || '')), dg.value);
+    await send(ws, 'Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });
+    await sleep(400);
+    await evalIn(ws, `document.body.classList.add('hidebars')`);
+    const hideH = await waitUntil(ws, "document.body.classList.contains('hidebars') && document.getElementById('mHide').getBoundingClientRect().height < 8", 4000);
+    const hh = await evalIn(ws, `document.getElementById('mHide').getBoundingClientRect().height`);
+    check('Mobile an thanh: mHide xep ve ~0, khong khoang trang', !!hideH, String(hh.value));
+    await evalIn(ws, `document.body.classList.remove('hidebars')`);
+    const showH = await waitUntil(ws, "!document.body.classList.contains('hidebars') && document.getElementById('mHide').getBoundingClientRect().height > 100", 4000);
+    const sh = await evalIn(ws, `document.getElementById('mHide').getBoundingClientRect().height`);
+    check('Mobile hien thanh: mHide no lai day du', !!showH, String(sh.value));
+    await send(ws, 'Emulation.clearDeviceMetricsOverride');
+    await sleep(300);
     await send(ws, 'Emulation.setDeviceMetricsOverride', { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false });
     await sleep(400);
     await evalIn(ws, `document.body.classList.add('has-drawer')`);
