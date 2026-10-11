@@ -617,6 +617,8 @@ async function main() {
     const blOpen = await waitUntil(ws, "document.getElementById('viewBacklog').style.display==='block' && document.querySelectorAll('#blTbody tr').length>=8", 8000);
     const blMeta = await evalIn(ws, `JSON.stringify({rows: document.querySelectorAll('#blTbody tr').length, ths: document.querySelectorAll('#blThead th').length, upd: document.getElementById('blUpdAt').textContent, cnt: document.getElementById('blCnt').textContent})`);
     check('Backlog: mo tab tai du lieu + 10 cot mac dinh + meta', !!(blOpen && JSON.parse(blMeta.value).ths===10 && /18:53:19/.test(JSON.parse(blMeta.value).upd)), blMeta.value);
+    const blTotal = await evalIn(ws, `document.getElementById('blCnt').textContent`);
+    check('Backlog: meta hien Total COGS theo dong loc', blTotal.value === '8 đơn - Total: 552,611 vnđ', blTotal.value);
     await evalIn(ws, `document.getElementById('blQ').value='SOC_Packed'; document.getElementById('blSearch').click()`);
     const blSearch = await waitUntil(ws, "document.querySelectorAll('#blTbody tr').length===4", 5000);
     check('Backlog: Tim kiem toan cuc loc con 4 dong', !!blSearch, String(blSearch));

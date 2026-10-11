@@ -470,20 +470,21 @@ header{flex-wrap:wrap}
 #printArea{width:4in}
 @media print{body>*{display:none!important}#printArea{display:block!important;margin:0;padding:0}#printArea .plabel{width:4in;height:6in;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:center;page-break-after:always}#printArea .plabel:last-child{page-break-after:auto}#printArea .plabel .pslip{width:4in;height:2in;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4mm;box-sizing:border-box}#printArea .pq img,#printArea .pq canvas,#printArea .pq table{width:1.35in!important;height:1.35in!important}#printArea .pcode{font-size:30px;font-weight:800;margin-top:6px;white-space:nowrap;padding:0 4px}}
 /* ===== Backlog tab (KHỚP mockup v11 duyệt) ===== */
-#viewBacklog .bl-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 14px;margin-bottom:10px;font-size:12.5px}
+#viewBacklog .bl-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:6px 10px;margin-bottom:4px;font-size:12px}
 #viewBacklog .bl-meta .upd{font-weight:800;color:var(--navy)}
 #viewBacklog .bl-meta .upd b{color:var(--o)}
-#viewBacklog .bl-meta .cnt{margin-left:auto;font-size:12.5px;color:var(--navy);font-weight:800}
+#viewBacklog .bl-meta .cnt{margin-left:auto;font-size:12px;color:var(--navy);font-weight:800;white-space:nowrap}
+#viewBacklog .bl-meta .cnt b{color:var(--o)}
 #viewBacklog .subnote{font-size:10.5px;color:var(--mut);font-weight:600}
-#viewBacklog .bl-search{display:flex;gap:8px;align-items:center;background:var(--card);border:1.5px solid #ffcfbd;border-radius:13px;padding:5px 6px 5px 13px;margin-bottom:10px;box-shadow:0 1px 6px rgba(238,77,45,.08)}
+#viewBacklog .bl-search{display:flex;gap:8px;align-items:center;background:var(--card);border:1.5px solid #ffcfbd;border-radius:13px;padding:3px 4px 3px 11px;margin-bottom:4px;box-shadow:0 1px 6px rgba(238,77,45,.08)}
 #viewBacklog .bl-search svg{color:var(--o);flex:none}
-#viewBacklog .bl-search input{border:none;background:transparent;padding:9px 0;font-size:14px;font-weight:600;flex:1;min-width:0;text-align:center}
+#viewBacklog .bl-search input{border:none;background:transparent;padding:6px 0;font-size:13px;font-weight:600;flex:1;min-width:0;text-align:center}
 #viewBacklog .bl-search input:focus{outline:none}
 #viewBacklog .bl-search .go{flex:none;white-space:nowrap}
 #blQClear{display:none;width:30px;height:30px;flex:none;border:none;border-radius:50%;background:#e8ecf1;color:#5b6572;font-size:13px;font-weight:800;line-height:1;padding:0}
 #blQClear.show{display:block}
-#viewBacklog .colbar{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:8px 10px;margin-bottom:10px}
-#viewBacklog .colbtn{flex:none;border-radius:99px;padding:8px 14px;font-size:11.5px;font-weight:800;color:var(--navy)}
+#viewBacklog .colbar{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:4px 8px;margin-bottom:4px}
+#viewBacklog .colbtn{flex:none;border-radius:99px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--navy)}
 #viewBacklog .colbtn.open{border-color:var(--o);color:var(--o);background:var(--tint)}
 #viewBacklog .scrollrow{display:none;gap:7px;overflow-x:auto;flex:1;min-width:0;padding:2px;align-items:center}
 #viewBacklog .scrollrow.show{display:flex}
@@ -2377,7 +2378,9 @@ if(blPage>pages)blPage=pages;
 var start=(blPage-1)*BL_PAGE;
 var tb=document.getElementById('blTbody');tb.innerHTML='';
 rows.slice(start,start+BL_PAGE).forEach(function(r){var tr=document.createElement('tr');if(r.shipment_id===blSelId)tr.className='sel';blVis.forEach(function(k){var td=document.createElement('td');td.textContent=(k==='cogs'?blFmtCogs(r[k]):(r[k]==null?'':r[k]));if(k==='shipment_id')td.className='sid';if(BL_TIP[k]){td.setAttribute('data-full',String(r[k]==null?'':r[k]));td.setAttribute('data-title',blTitle(k));td.onmouseenter=function(){blTipIn(td);};td.onmouseleave=blTipOut;td.onclick=function(e){e.stopPropagation();blTipOut();blOpenDetail(r.shipment_id);};}tr.appendChild(td);});tr.onclick=function(){blOpenDetail(r.shipment_id);};tb.appendChild(tr);});
-document.getElementById('blCnt').textContent=rows.length+' đơn';
+// BigInt: tong 13876 dong co the vuot 2^53 neu dung Number.
+var blTot=rows.reduce(function(s,r){return s+BigInt(blCogsDigits(r.cogs)||'0');},0n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+document.getElementById('blCnt').innerHTML=rows.length+' đơn - Total: <b>'+blTot+' vnđ</b>';
 document.getElementById('blRng').textContent='Total '+rows.length+' đơn';
 var pn=document.getElementById('blPgNums');pn.innerHTML='';
 for(var p=1;p<=pages;p++){if(pages>7&&(p>3&&p<pages-1&&Math.abs(p-blPage)>1)){if(pn.lastChild&&pn.lastChild.textContent==='…')continue;var d=document.createElement('span');d.textContent='…';d.style.padding='8px 2px';pn.appendChild(d);continue;}(function(pp){var b=document.createElement('button');b.type='button';b.className='pg'+(pp===blPage?' cur':'');b.textContent=pp;b.onclick=function(){blPage=pp;blRenderRows();document.getElementById('blWrap').scrollTop=0;};pn.appendChild(b);})(p);}

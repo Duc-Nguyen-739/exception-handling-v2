@@ -31,6 +31,12 @@ test('backlog: fmt helpers — COGS + UpdatedAt', () => {
 });
 
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+test('backlog: total COGS — theo dòng lọc, dùng giá trị chuẩn', () => {
+  var rows = ['35000', '28890000000000004', '6800'];
+  var tot = rows.reduce((s, v) => s + BigInt(blCogsDigits(v) || '0'), 0n);
+  assert.strictEqual(tot.toString(), '28931800');
+});
 const gs = fs.readFileSync(path.join(__dirname, '..', 'Code.gs'), 'utf8');
 const mock = fs.readFileSync(path.join(__dirname, '..', 'mock/mock-google.js'), 'utf8');
 
@@ -52,6 +58,8 @@ test('backlog: index.html — nav + view + wiring', () => {
   assert.ok(html.indexOf('id="navBacklog"') < html.indexOf('id="navLiq"'), 'backlog nav before liq');
   assert.ok(html.includes('Copy Shipment ID'), 'copy button must use row-2 title');
   assert.ok(/#navBacklog\{display:none\}/.test(html) || html.includes('#navBacklog{display:none}'), 'backlog hidden on mobile');
+  assert.ok(html.includes('vnđ'), 'missing COGS total unit');
+  assert.ok(html.includes('BigInt(blCogsDigits'), 'total must sum normalized COGS with BigInt');
 });
 
 test('backlog: Code.gs — listBacklog read-only từ hàng 4, không gate', () => {
