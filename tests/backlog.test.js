@@ -59,6 +59,7 @@ test('backlog: index.html — nav + view + wiring', () => {
   assert.ok(html.includes('Copy Shipment ID'), 'copy button must use row-2 title');
   assert.ok(/#navBacklog\{display:none\}/.test(html) || html.includes('#navBacklog{display:none}'), 'backlog hidden on mobile');
   assert.ok(html.includes('vnđ'), 'missing COGS total unit');
+  assert.ok(html.includes('max-width:680px'), 'search must be capped 680px centered');
   assert.ok(html.includes('BigInt(blCogsDigits'), 'total must sum normalized COGS with BigInt');
 });
 
