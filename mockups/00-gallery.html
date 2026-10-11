@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPX Exception Handling — Gallery 5 mockup</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:system-ui,Arial,sans-serif;background:#1b2330;color:#e8edf5}
+body{display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;background:#111826;border-bottom:1px solid #2b3648}
+.bar h1{font-size:14px;margin:0 12px 0 0;font-weight:700;color:#fff}
+.bar button{border:1px solid #3a4860;background:#1c2536;color:#cfd8e6;border-radius:8px;padding:7px 12px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.bar button.on{background:#ee4d2d;border-color:#ee4d2d;color:#fff}
+.bar .sp{flex:1}
+.bar .hint{font-size:11.5px;color:#8a97ab}
+.bar a{color:#8fb8ff;font-size:12px}
+iframe{flex:1;width:100%;border:0;background:#fff}
+</style>
+</head>
+<body>
+<div class="bar">
+  <h1>SPX Exception Handling · 5 mẫu mockup</h1>
+  <button data-m="01-kho-van-sang-ro.html" class="on">1 · Kho vận sáng rõ</button>
+  <button data-m="02-dieu-hanh-toi.html">2 · Điều hành tối</button>
+  <button data-m="03-bang-bento.html">3 · Bento điều hành</button>
+  <button data-m="04-glass-tim.html">4 · Glass tím</button>
+  <button data-m="05-mobile-mot-tay.html">5 · Mobile một tay</button>
+  <span class="sp"></span>
+  <span class="hint">Mockup tĩnh, dữ liệu minh họa, không gọi API, không sửa code thật</span>
+</div>
+<iframe id="v" src="01-kho-van-sang-ro.html" title="Mockup"></iframe>
+<script>
+(function(){
+  var btns=document.querySelectorAll('.bar button[data-m]');
+  var fr=document.getElementById('v');
+  function show(name,btn){
+    fr.setAttribute('src',name);
+    for(var i=0;i<btns.length;i++)btns[i].classList.toggle('on',btns[i]===btn);
+    history.replaceState(null,'','#'+name.split('-')[0]);
+  }
+  for(var i=0;i<btns.length;i++)(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-m'),b)})})(btns[i]);
+  var h=location.hash.replace('#','');
+  for(var j=0;j<btns.length;j++){if(btns[j].getAttribute('data-m').indexOf(h+'-')===0){show(btns[j].getAttribute('data-m'),btns[j]);break}}
+})();
+</script>
+</body>
+</html>
