@@ -143,6 +143,7 @@ Khi trả kết quả có sửa code, thêm 1 dòng `**Rule check:** A: <tóm t�
 
 - Chạm gate → tạo `plan.md` (gitignored, không commit): Bối cảnh · Quyết định · Chi tiết file:line · Verify · Rủi ro → chờ user duyệt (`duyệt`/`LGTM`/`OK`) mới được sửa code.
 - Muốn lưu vết → copy sang `docs/plans/YYYY-MM-DD-<slug>.md` commit CÙNG commit code.
+- Viết Plan phải chi tiết để con người và agent khác đọc hiểu và làm tiếp được từng bước: mỗi bước ghi rõ mục đích · file:line chạm · hành động cụ thể · cách verify tương ứng.
 
 ---
 
