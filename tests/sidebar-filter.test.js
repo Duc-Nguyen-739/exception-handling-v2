@@ -29,8 +29,9 @@ test('sidebar-filter: CSS don sac desktop, mobile giu nguyen', () => {
 
 
 test('footer-divider: vach mo + nut ria phai can giua chieu cao', () => {
-  assert.ok(html.includes('.bottom-row{display:flex;gap:8px;margin-top:auto;align-items:center;justify-content:flex-end;border-top:1px solid rgba(255,255,255,.09);height:58px;padding:0 8px 0 0}'), 'o chan mo: vach + cao 58px + nut ria phai');
-  assert.ok(html.includes('body.rail .railbox .expand{margin-top:auto;width:100%;height:58px;'), 'o chan rail: vach + cao 58px');
+  assert.ok(html.includes('.bottom-row{display:flex;gap:8px;margin-top:auto;align-items:center;justify-content:flex-end;border-top:1px solid rgba(255,255,255,.09);height:36px;padding:0 10px}'), 'o chan mo: vach + cao 36px + nut ria phai');
+  assert.ok(html.includes('.bottom-row .side-toggle{width:28px;height:28px;'), 'nut Thu/Mo 28px (C sieu gon)');
+  assert.ok(html.includes('body.rail .railbox .expand{margin-top:auto;width:100%;height:36px;'), 'o chan rail: vach + cao 36px');
 });
 
 test('rail-flyout: nut pheu + bang phu + hover wiring', () => {
