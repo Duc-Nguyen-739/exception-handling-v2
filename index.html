@@ -560,6 +560,26 @@ header{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-b
 .pal-foot kbd,#kbdPal{border:1px solid var(--line);background:var(--bg);border-radius:7px;font-size:10.5px;font-weight:800;color:var(--mut);padding:3px 8px;font-family:inherit}
 #kbdPal{cursor:pointer;flex:none}
 @media(max-width:899px){.sheet{border-radius:var(--r-lg)}.bnav{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border-top:1px solid var(--glass-line)}#gridPager{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border-top:1px solid var(--glass-line);border-bottom:1px solid var(--glass-line)}.tbar{flex-wrap:wrap;gap:8px}.tbar h1{font-size:14px;flex:1;min-width:0}#srchPill{flex:1 1 100%;order:3;max-width:none}.bento{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bt.hero-tile{grid-column:1/-1;grid-row:auto}.bt.wide{grid-column:1/-1}.bt{padding:13px}.bt .v{font-size:22px}}
+/* tab T4 (KHOP mockup tabHead): tieu de + sub + action phai */
+.tabhead{display:flex;align-items:center;gap:10px;margin:2px 0 12px;flex-wrap:wrap}
+.tabhead h2{margin:0;font-size:16px;font-weight:800;color:var(--navy)}
+.tabhead small{font-size:11.5px;color:var(--mut);font-weight:600}
+.tabhead .sp{flex:1}
+.tabhead .st{font-size:11px}
+/* tab Gop y: tai dung fb* cua modal, list cao theo tab */
+#feedList{display:flex;flex-direction:column;gap:10px;max-width:760px;max-height:calc(100dvh - 340px);min-height:220px;overflow-y:auto;background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-lg);padding:14px;box-shadow:var(--glass-sh)}
+#feedList .fbEmpty{text-align:center;color:var(--mut);font-size:12px;font-weight:600;padding:30px 10px}
+#feedSendRow{display:flex;gap:8px;margin-top:10px;max-width:760px}
+#feedSendRow input{flex:1}
+/* In Ma: tiles T4 */
+#viewPrint .pcard{background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-lg);box-shadow:var(--glass-sh);cursor:pointer;transition:transform .14s ease}
+#viewPrint .pcard:hover{transform:translateY(-2px)}
+#viewPrint .pcard.on{border-color:var(--o);box-shadow:0 0 0 3px rgba(238,77,45,.15),var(--glass-sh)}
+/* Backlog pills glass */
+#viewBacklog .pill{background:var(--glass);border-color:var(--glass-line)}
+/* Detail drawer + create: bo lon theo T4 (giu DOM) */
+#detailBody .phstrip .thumb,.thumb{border-radius:14px}
+#createModal .opt{background:var(--glass);border-color:var(--glass-line);border-radius:var(--r-md)}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){header{background:var(--card)}.sheet{background:var(--card)}#gridPager{background:var(--card)}.bt,.card{background:var(--card)}@media(max-width:899px){.bnav{background:var(--card)}}}
 </style>
 </head>
@@ -652,6 +672,7 @@ header{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-b
 </main>
 
 <main id="viewLiq" style="display:none">
+<div class="tabhead"><h2>Lô thanh lý</h2><small>Quét mã để gộp lô, chốt bằng mã SPXVN</small></div>
 <div class="backrow"><span id="liqTotalTop">Tổng: <b>0</b> đơn đã quét</span></div>
 <div id="liqCodeWrap" style="display:none">
 <div class="field"><label>MÃ THANH LÝ *</label>
@@ -680,6 +701,7 @@ header{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-b
 </main>
 
 <main id="viewPrint" style="display:none">
+<div class="tabhead"><h2>In Mã</h2><small id="prHeadSub">Tem 4x6in · trạm laptop tự in</small><span class="sp"></span><span class="st thanhly" id="prStation">Trạm in</span></div>
 <h2 class="psect">Chọn cách in</h2>
 <div class="pstep">Chọn cách in</div>
 <div class="pcards">
@@ -702,6 +724,7 @@ header{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-b
 </main>
 
 <main id="viewAccess" style="display:none">
+<div class="tabhead"><h2>Quyền</h2><small id="roleHeadSub">Phân quyền theo email</small></div>
 <div class="msg" id="msgAccess"></div>
 <div class="msg" id="msgDeploy"></div>
 <div id="accessAdmin" style="display:none">
@@ -714,12 +737,20 @@ header{background:var(--glass);backdrop-filter:blur(var(--glass-blur));-webkit-b
 </main>
 
 <main id="viewBacklog" style="display:none">
+<div class="tabhead"><h2>Backlog đầu ca</h2><small>Tiếp nhận sang Danh sách</small></div>
 <div class="bl-meta"><span class="upd">Cập Nhật Lúc: <b id="blUpdAt">—</b></span><span class="subnote">Dữ liệu 60 phút cập nhật 1 lần.</span><span class="cnt" id="blCnt"></span></div>
 <div class="msg" id="blMsg"></div>
 <div class="bl-search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="blQ" placeholder="Nhập thông tin để tìm..." inputmode="text"><button id="blQClear" title="Xóa tìm kiếm">✕</button><button id="blSearch" class="primary go" type="button">Tìm kiếm</button></div>
 <div class="colbar"><button class="colbtn" id="blColBtn" type="button">Cột &gt;</button><div class="scrollrow" id="blScroll"><button id="blReset" class="btnReset" type="button">Reset</button><span id="blPills" style="display:contents"></span></div></div>
 <div class="tblwrap" id="blWrap"><div class="loading" id="blLoading" style="display:none"><div class="spin"></div><div>Đang tải...</div></div><table id="blTbl" style="display:none"><colgroup id="blColgrp"></colgroup><thead><tr id="blThead"></tr></thead><tbody id="blTbody"></tbody></table><div class="empty" id="blEmpty" style="display:none">Không tìm thấy dòng nào khớp từ khóa.<br>Bấm ✕ để xóa tìm kiếm.</div></div>
 <div class="pager" id="blPager" style="display:none"><span class="rng" id="blRng"></span><button class="pg" id="blPgPrev" type="button">‹ Trước</button><span id="blPgNums" style="display:flex;gap:6px"></span><button class="pg" id="blPgNext" type="button">Sau ›</button></div>
+</main>
+
+<main id="viewFeed" style="display:none">
+<div class="tabhead"><h2>Góp ý ca trực</h2><small id="feedCnt">nhóm nội bộ</small></div>
+<div class="msg" id="msgFeed"></div>
+<div id="feedList"></div>
+<div id="feedSendRow"><input id="feedInput" placeholder="Ghi góp ý cho ca trực..." maxlength="2000"><button id="btnFeedSend" class="primary" type="button">Gửi</button></div>
 </main>
 
 <div class="modal" id="blDetail"><div class="sheet">
@@ -1160,7 +1191,7 @@ if(!g)return;
 var t=g.getAttribute('data-goto');
 if(t==='liq')document.getElementById('navLiq').click();else if(t==='print')document.getElementById('navPrint').click();else if(t==='backlog')document.getElementById('navBacklog').click();else if(t==='feed')document.getElementById('navFeed').click();
 });
-var RAILNAV=[['navMain','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>','Danh sách'],['navLiq','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>','Thanh lý'],['navBacklog','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>','Backlog'],['navPrint','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>','In Mã'],['navAccess','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>','Role']];
+var RAILNAV=[['navMain','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>','Danh sách'],['navLiq','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>','Thanh lý'],['navBacklog','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>','Backlog'],['navPrint','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>','In Mã'],['navAccess','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>','Role'],['navFeed','<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg>','Góp ý']];
 var railFlyOpen=false,railFlyT=null;
 function openRailFly(){clearTimeout(railFlyT);railFlyOpen=true;syncRailFly();}
 function schedRailFly(){clearTimeout(railFlyT);railFlyT=setTimeout(function(){railFlyOpen=false;syncRailFly();},140);}
@@ -1879,7 +1910,7 @@ setCreateDoneUI(false);
 await refreshPreview();
 }
 
-function setActive(id){['navMain','navBacklog','navLiq','navPrint','navAccess'].forEach(function(n){document.getElementById(n).classList.toggle('on',n===id);});curNav=id;renderRail();}
+function setActive(id){['navMain','navBacklog','navLiq','navPrint','navFeed','navAccess'].forEach(function(n){var e=document.getElementById(n);if(e)e.classList.toggle('on',n===id);});curNav=id;renderRail();}
 var PRINT_RE=/^(Box|Item)\.\d{2}-\d{2}-\d{4}\.\d+$/;
 var lastAutoPrint='';
 function syncTabHeader(tab){
@@ -1893,7 +1924,7 @@ cx.classList.remove('back');cx.removeAttribute('data-back');
 if(isList){cx.style.display='none';cx.textContent='';return;}
 cx.style.display='block';
 if(tab==='liq'||tab==='print'){cx.textContent='\u2039 Quay l\u1ea1i';cx.classList.add('back');cx.setAttribute('data-back',tab);cx.style.display='';}
-else if(tab==='role'||tab==='backlog'){cx.style.display='none';cx.textContent='';}
+else if(tab==='role'||tab==='backlog'||tab==='feed'){cx.style.display='none';cx.textContent='';}
 }
 function showPrint(on){
 document.getElementById('viewPrint').style.display=on?'block':'none';
@@ -1901,6 +1932,7 @@ document.getElementById('viewMain').style.display=on?'none':'block';
 document.getElementById('viewLiq').style.display='none';
 document.getElementById('viewAccess').style.display='none';
 document.getElementById('viewBacklog').style.display='none';
+document.getElementById('viewFeed').style.display='none';
 if(on){setActive('navPrint');}
 else{setActive('navMain');}
 syncTabHeader(on?'print':'list');
@@ -2064,6 +2096,7 @@ h+='<tr><td class="mono">'+esc(u.email)+'</td><td><span class="st adm">'+esc(u.r
 });
 h+='</table>';
 document.getElementById('usersTable').innerHTML=h;
+try{document.getElementById('roleHeadSub').textContent=r.data.length+' thành viên';}catch(e){}
 document.getElementById('accessAdmin').style.display='block';
 var btns=document.querySelectorAll('.roleBtn');
 btns.forEach(function(b){b.onclick=function(){delUser(b.getAttribute('data-email'));};});
@@ -2319,8 +2352,8 @@ document.getElementById('cardSingle').onclick=function(){selectPrintCard('single
 document.getElementById('cardBulk').onclick=function(){selectPrintCard('bulk');document.getElementById('printKindModal').classList.add('open');};
 document.getElementById('scanPrint').addEventListener('input',function(){clearTimeout(autoT);autoT=setTimeout(autoPrintSingle,600);});
 document.getElementById('scanPrint').addEventListener('keydown',function(e){if(e.key==='Enter'){clearTimeout(autoT);autoPrintSingle();}});
-function showLiq(on){document.getElementById('viewLiq').style.display=on?'block':'none';document.getElementById('viewMain').style.display=on?'none':'block';document.getElementById('viewAccess').style.display='none';document.getElementById('viewPrint').style.display='none';document.getElementById('viewBacklog').style.display='none';setActive(on?'navLiq':'navMain');syncTabHeader(on?'liq':'list');if(on&&isStation_()){try{if(liqStep2()){document.getElementById('liqCode').focus();}else{document.getElementById('scanLiq').focus();}}catch(e){}}}
-async function showAccess(){document.getElementById('viewAccess').style.display='block';document.getElementById('viewMain').style.display='none';document.getElementById('viewLiq').style.display='none';document.getElementById('viewPrint').style.display='none';document.getElementById('viewBacklog').style.display='none';setActive('navAccess');syncTabHeader('role');try{await loadMe();}catch(e){}
+function showLiq(on){document.getElementById('viewLiq').style.display=on?'block':'none';document.getElementById('viewMain').style.display=on?'none':'block';document.getElementById('viewAccess').style.display='none';document.getElementById('viewPrint').style.display='none';document.getElementById('viewBacklog').style.display='none';document.getElementById('viewFeed').style.display='none';setActive(on?'navLiq':'navMain');syncTabHeader(on?'liq':'list');if(on&&isStation_()){try{if(liqStep2()){document.getElementById('liqCode').focus();}else{document.getElementById('scanLiq').focus();}}catch(e){}}}
+async function showAccess(){document.getElementById('viewAccess').style.display='block';document.getElementById('viewMain').style.display='none';document.getElementById('viewLiq').style.display='none';document.getElementById('viewPrint').style.display='none';document.getElementById('viewBacklog').style.display='none';document.getElementById('viewFeed').style.display='none';setActive('navAccess');syncTabHeader('role');try{await loadMe();}catch(e){}
 var e=state.me||{};
 var dl=document.getElementById('msgDeploy');
 if(dl)dl.textContent='Đăng nhập: '+(e.email||'?')+' · '+(e.role||'?');
@@ -2349,6 +2382,7 @@ document.getElementById('viewMain').style.display=on?'none':'block';
 document.getElementById('viewLiq').style.display='none';
 document.getElementById('viewPrint').style.display='none';
 document.getElementById('viewAccess').style.display='none';
+document.getElementById('viewFeed').style.display='none';
 setActive(on?'navBacklog':'navMain');
 syncTabHeader(on?'backlog':'list');
 if(on){blSetColOpen(false);blCloseDrop();blLoad();}
@@ -2426,7 +2460,7 @@ document.getElementById('blDetail').addEventListener('click',function(e){if(e.ta
 document.getElementById('blWrap').addEventListener('scroll',function(){blTipOut();blCloseDrop();});
 if(document.addEventListener){document.addEventListener('keydown',function(e){if(e.key==='Escape'){blCloseDrop();blCloseDetail();}});
 document.addEventListener('click',function(e){var hd=document.getElementById('blHdrop');if(hd.style.display==='block'&&!hd.contains(e.target))blCloseDrop();});}
-var fbMsgs=[],fbOpening=false,fbReplyId=null;
+var fbMsgs=[],fbOpening=false,fbReplyId=null,fbReplyIn=null;
 function fbIsAdmin(){return (state.me&&state.me.role)==='ADMIN';}
 function fbNameHtml(m){
   if(m.role==='ADMIN'||!m.email)return '<span class="fbadmBadge">ADMIN</span>';
@@ -2446,7 +2480,7 @@ function fbRepliesHtml(m){
   h+='</div>';
   return h;
 }
-function fbMsgHtml(m){
+function fbMsgHtml(m,root){
   var adm=(m.role==='ADMIN'||!m.email);
   var h='<div class="fbmsg'+(adm?' adm':'')+'">'
     +fbAvaHtml(m)+'<div class="fbcol">'
@@ -2456,7 +2490,7 @@ function fbMsgHtml(m){
   else{
     h+=fbRepliesHtml(m);
     if(fbIsAdmin())h+='<button class="fbReplyBtn" type="button" data-fbid="'+esc(m.id)+'">↩ Reply</button>';
-    if(fbReplyId===m.id)h+='<div class="fbRepBox"><textarea id="fbRepText" placeholder="Trả lời với tư cách Admin…"></textarea>'
+    if(fbReplyId===m.id&&fbReplyIn===root)h+='<div class="fbRepBox"><textarea class="fbRepText" placeholder="Trả lời với tư cách Admin…"></textarea>'
       +'<div class="fbrow"><button class="primary" type="button" data-fbsendreply="'+esc(m.id)+'">Gửi trả lời</button>'
       +'<button type="button" data-fbcancelreply="1">Hủy</button></div></div>';
   }
@@ -2464,11 +2498,14 @@ function fbMsgHtml(m){
   return h;
 }
 function renderFbList(){
-  var el=document.getElementById('fbList');
-  if(!el)return;
-  if(!fbMsgs.length){el.innerHTML='<div class="fbEmpty">💬<br>Chưa có góp ý — hãy là người đầu tiên chia sẻ nhé.</div>';return;}
-  el.innerHTML=fbMsgs.map(function(m){return fbMsgHtml(m);}).join('');
-  el.scrollTop=el.scrollHeight;
+  [['fbList',null],['feedList','feed']].forEach(function(p){
+    var el=document.getElementById(p[0]);
+    if(!el)return;
+    if(!fbMsgs.length){el.innerHTML='<div class="fbEmpty">💬<br>Chưa có góp ý — hãy là người đầu tiên chia sẻ nhé.</div>';return;}
+    el.innerHTML=fbMsgs.map(function(m){return fbMsgHtml(m,p[0]);}).join('');
+    el.scrollTop=el.scrollHeight;
+  });
+  var fc=document.getElementById('feedCnt');if(fc)fc.textContent=fbMsgs.length+' tin · nhóm nội bộ';
 }
 async function openFeedback(){
   var m=document.getElementById('fbModal');if(!m)return;
@@ -2493,32 +2530,69 @@ async function sendFeedback(){
     fbMsgs.push(r.data);inp.value='';renderFbList();msg('msgFb','Đã gửi góp ý.',true);
   }catch(e){msg('msgFb',e.message||'Lỗi gửi góp ý');}
 }
-async function submitFbReply(id){
-  var ta=document.getElementById('fbRepText');var v=ta?ta.value.trim():'';
-  if(!v){msg('msgFb','Nhập nội dung trả lời.');return;}
-  msg('msgFb','Đang gửi…',true);
+async function submitFbReply(id,root){
+  root=(root==='feedList')?'feedList':'fbList';
+  var mid=(root==='feedList')?'msgFeed':'msgFb';
+  var ta=document.querySelector('#'+root+' .fbRepText');var v=ta?ta.value.trim():'';
+  if(!v){msg(mid,'Nhập nội dung trả lời.');return;}
+  msg(mid,'Đang gửi…',true);
   try{
     var r=await gs('replyFeedback',[id,v]);
     if(!r||!r.ok)throw new Error((r&&r.error)||'Gửi thất bại');
     var m=fbMsgs.find(function(x){return x.id===id;});
     if(m){(m.replies=m.replies||[]).push(r.data);}
-    fbReplyId=null;renderFbList();msg('msgFb','Đã trả lời.',true);
-  }catch(e){msg('msgFb',e.message||'Lỗi gửi trả lời');}
+    fbReplyId=null;fbReplyIn=null;renderFbList();msg(mid,'Đã trả lời.',true);
+  }catch(e){msg(mid,e.message||'Lỗi gửi trả lời');}
 }
-document.getElementById('btnFeedback').onclick=function(){if(!fbOpening)openFeedback();};document.getElementById('navFeed').onclick=function(){if(!fbOpening)openFeedback();};
+async function sendFeed(){
+  var inp=document.getElementById('feedInput');var v=(inp.value||'').trim();
+  if(!v){msg('msgFeed','Nhập góp ý trước.');return;}
+  msg('msgFeed','Đang gửi…',true);
+  try{
+    var r=await gs('addFeedback',[v]);
+    if(!r||!r.ok)throw new Error((r&&r.error)||'Gửi thất bại');
+    fbMsgs.push(r.data);inp.value='';renderFbList();msg('msgFeed','Đã gửi góp ý.',true);
+  }catch(e){msg('msgFeed',e.message||'Lỗi gửi góp ý');}
+}
+async function openFeedTab(){
+  showFeed(true);fbReplyId=null;fbReplyIn=null;
+  msg('msgFeed','Đang tải…',true);
+  try{
+    var r=await gs('listFeedback',[]);
+    if(!r||!r.ok)throw new Error((r&&r.error)||'Không tải được feedback');
+    fbMsgs=r.data||[];renderFbList();msg('msgFeed','',true);
+  }catch(e){msg('msgFeed',e.message||'Lỗi tải feedback');}
+  try{document.getElementById('feedInput').focus();}catch(e){}
+}
+function showFeed(on){
+document.getElementById('viewFeed').style.display=on?'block':'none';
+document.getElementById('viewMain').style.display=on?'none':'block';
+document.getElementById('viewLiq').style.display='none';
+document.getElementById('viewPrint').style.display='none';
+document.getElementById('viewAccess').style.display='none';
+document.getElementById('viewBacklog').style.display='none';
+setActive(on?'navFeed':'navMain');
+syncTabHeader(on?'feed':'list');
+if(on)openFeedTab();
+}
+document.getElementById('btnFeedback').onclick=function(){if(!fbOpening)openFeedback();};document.getElementById('navFeed').onclick=function(){showFeed(true);} ;
 document.getElementById('btnCloseFb').onclick=function(){document.getElementById('fbModal').classList.remove('open');};
 document.getElementById('fbModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 document.getElementById('btnFbSend').onclick=sendFeedback;
 document.getElementById('fbInput').addEventListener('keydown',function(e){if(e.key==='Enter')sendFeedback();});
-document.getElementById('fbList').addEventListener('click',function(e){
+function fbListClick_(e,root){
   var b=e.target.closest('[data-fbid]');
-  if(b){fbReplyId=fbReplyId===b.getAttribute('data-fbid')?null:b.getAttribute('data-fbid');renderFbList();
-    try{var ta=document.getElementById('fbRepText');if(ta)ta.focus();}catch(err){}return;}
+  if(b){var id=b.getAttribute('data-fbid');if(fbReplyId===id&&fbReplyIn===root){fbReplyId=null;fbReplyIn=null;}else{fbReplyId=id;fbReplyIn=root;}renderFbList();
+    try{var ta=document.querySelector('#'+root+' .fbRepText');if(ta)ta.focus();}catch(err){}return;}
   var c=e.target.closest('[data-fbcancelreply]');
-  if(c){fbReplyId=null;renderFbList();return;}
+  if(c){fbReplyId=null;fbReplyIn=null;renderFbList();return;}
   var s=e.target.closest('[data-fbsendreply]');
-  if(s){submitFbReply(s.getAttribute('data-fbsendreply'));return;}
-});
+  if(s){submitFbReply(s.getAttribute('data-fbsendreply'),root);return;}
+}
+document.getElementById('fbList').addEventListener('click',function(e){fbListClick_(e,'fbList');});
+document.getElementById('feedList').addEventListener('click',function(e){fbListClick_(e,'feedList');});
+document.getElementById('btnFeedSend').onclick=sendFeed;
+document.getElementById('feedInput').addEventListener('keydown',function(e){if(e.key==='Enter')sendFeed();});
 </script>
 </body>
 </html>

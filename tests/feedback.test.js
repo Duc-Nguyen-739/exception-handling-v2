@@ -73,3 +73,17 @@ test('feedback: mock — seed + 3 endpoint', () => {
   assert.ok(/addFeedback: function/.test(mock), 'mock missing addFeedback');
   assert.ok(/replyFeedback: function/.test(mock), 'mock missing replyFeedback');
 });
+
+test('feedback: tab Gop y T4 dung chung endpoint, reply scope theo root', () => {
+  const h = require('node:fs').readFileSync('index.html', 'utf8');
+  assert.ok(h.includes('id="viewFeed"'), 'thieu tab Gop y');
+  assert.ok(h.includes('id="feedList"') && h.includes('id="feedInput"'), 'thieu chat tab');
+  assert.ok(h.includes('id="btnFeedSend"') && h.includes('id="msgFeed"'), 'thieu gui tab');
+  assert.ok(h.includes('function showFeed(on)'), 'thieu showFeed');
+  assert.ok(h.includes('function sendFeed()'), 'thieu sendFeed');
+  assert.ok(h.includes("getElementById('navFeed').onclick=function(){showFeed(true);}"), 'navFeed phai mo tab');
+  assert.ok(h.includes('fbReplyIn'), 'reply phai scope theo root');
+  assert.ok(!h.includes('id="fbRepText"'), 'khong trung ID textarea 2 noi');
+  assert.ok(h.includes("syncTabHeader(on?'feed':'list')"), 'tab feed phai sync header');
+  assert.ok(h.includes('class="tabhead"'), 'thieu tabhead T4');
+});

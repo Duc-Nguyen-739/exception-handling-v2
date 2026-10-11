@@ -616,6 +616,22 @@ async function main() {
     const fbStaff = await evalIn(ws, `document.querySelectorAll('#fbList .fbReplyBtn').length === 0`);
     check('Feedback: USER khong thay nut Reply', fbStaff.value === true, String(fbStaff.value));
     await evalIn(ws, `state.me={email:'admin.mock@spxexpress.com',role:'ADMIN'}; document.getElementById('btnCloseFb').click()`);
+    // Tab Gop y T4 (endpoint that, UI tab rieng, reply scope theo root)
+    await evalIn(ws, `document.getElementById('navFeed').click()`);
+    const feedOpen = await waitUntil(ws, "document.getElementById('viewFeed').style.display==='block' && document.querySelectorAll('#feedList .fbmsg').length>=3", 8000);
+    const feedHead = await evalIn(ws, `JSON.stringify({h: document.querySelector('#viewFeed .tabhead h2').textContent, n: document.querySelectorAll('#feedList .fbmsg').length, cnt: document.getElementById('feedCnt').textContent})`);
+    check('Feed tab: mo + tabhead + tai >=3 tin', !!(feedOpen && JSON.parse(feedHead.value).h==='Góp ý ca trực' && JSON.parse(feedHead.value).n>=3), feedHead.value);
+    await evalIn(ws, `document.getElementById('feedInput').value='Gop y tu tab chrome test'; document.getElementById('btnFeedSend').click()`);
+    const feedSent = await waitUntil(ws, "document.getElementById('feedList').innerText.includes('Gop y tu tab chrome test')", 8000);
+    check('Feed tab: gui tin moi hien ngay', !!feedSent, String(feedSent));
+    await evalIn(ws, `document.querySelector('#feedList .fbReplyBtn').click(); document.querySelector('#feedList .fbRepBox textarea').value='Tra loi tab ADMIN'; document.querySelector('#feedList [data-fbsendreply]').click()`);
+    const feedRep = await waitUntil(ws, "document.getElementById('feedList').innerText.includes('Tra loi tab ADMIN')", 8000);
+    check('Feed tab: Admin reply hien Admin', !!feedRep, String(feedRep));
+    await evalIn(ws, `document.getElementById('navMain').click()`);
+    const feedBack = await waitUntil(ws, "document.getElementById('viewMain').style.display==='block' && document.getElementById('viewFeed').style.display==='none'", 5000);
+    check('Feed tab: ve Danh sach an tab', !!feedBack, String(feedBack));
+    const ths = await evalIn(ws, `JSON.stringify(['viewBacklog','viewLiq','viewPrint','viewAccess','viewFeed'].map(function(v){var m=document.getElementById(v);return !!(m&&m.querySelector('.tabhead h2'));}))`);
+    check('5 tab co tabhead T4', ths.value==='[true,true,true,true,true]', ths.value);
     // Backlog tab (Sheet Backlog read-only, mock 8 dong)
     // Dong modal chi tiet man hinh chinh con sot tu buoc truoc (mobile overlay che bang)
     await evalIn(ws, `document.getElementById('detailModal').classList.remove('open');document.body.classList.remove('has-drawer');`);
