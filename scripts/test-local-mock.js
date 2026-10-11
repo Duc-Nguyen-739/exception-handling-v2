@@ -580,16 +580,16 @@ async function main() {
     check('Bam caption khong hien thong bao', !!(U && U.capSilent === ''), uni.value);
     const cp = await evalIn(ws, `JSON.stringify({pad: getComputedStyle(document.querySelector('header')).paddingTop, gap: getComputedStyle(document.querySelector('header')).gap, msgHidden: (function(){document.getElementById('msgMain').textContent='';return getComputedStyle(document.getElementById('msgMain')).display;})()})`);
     check('Mobile siet khe: header 8px + gap 4px + msg rong an', cp.value === '{"pad":"8px","gap":"4px","msgHidden":"none"}', cp.value);
-    const rv = await evalIn(ws, `JSON.stringify({bell: !!document.getElementById('btnIntro'), modal: !!document.getElementById('introModal'), first: document.querySelector('.hact').firstElementChild.id})`);
-    check('Nut chuong Gioi thieu the cho so ban', rv.value === '{"bell":true,"modal":true,"first":"btnIntro"}', rv.value);
+    const rv = await evalIn(ws, `JSON.stringify({bell: !!document.getElementById('btnIntro'), modal: !!document.getElementById('introModal'), first: document.querySelector('.hact').firstElementChild.id, inRange: !!document.querySelector('#rangebar .rg-icons #btnIntro')})`);
+    check('Nut chuong Gioi thieu cung hang Edit trong rangebar, header chi giu chip', rv.value === '{"bell":true,"modal":true,"first":"whoChip","inRange":true}', rv.value);
     await evalIn(ws, `document.getElementById('btnIntro').click()`);
     const ivOpen = await waitUntil(ws, "document.getElementById('introModal').classList.contains('open')", 3000);
     check('Chuong mo popup Gioi thieu', !!ivOpen, String(ivOpen));
     await evalIn(ws, `document.getElementById('btnCloseIntro').click()`);
-    // Feedback (popup messenger rieng, icon gan sau bell)
-    const fbPos = await evalIn(ws, `JSON.stringify((function(){var h=document.querySelector('.hact');return {first:h.firstElementChild.id,next:document.getElementById('btnIntro').nextElementSibling.id};})())`);
+    // Feedback (popup messenger rieng, icon sau bell trong rangebar)
+    const fbPos = await evalIn(ws, `JSON.stringify((function(){var g=document.querySelector('#rangebar .rg-icons');var l=document.querySelector('#rangebar .rg-line');return {inLine: l.contains(g), afterL2: document.querySelector('#rangebar .rg-l2').nextElementSibling===g, next:document.getElementById('btnIntro').nextElementSibling.id};})())`);
     const FBP = fbPos.err ? null : JSON.parse(fbPos.value);
-    check('Feedback: icon gan sau nut chuong, chua dau tien', !!(FBP && FBP.first==='btnIntro' && FBP.next==='btnFeedback'), fbPos.value);
+    check('Feedback: icon sau nut chuong, cung hang Edit', !!(FBP && FBP.inLine && FBP.afterL2 && FBP.next==='btnFeedback'), fbPos.value);
     await evalIn(ws, `document.getElementById('btnFeedback').click()`);
     const fbOpen = await waitUntil(ws, "document.getElementById('fbModal').classList.contains('open') && document.querySelectorAll('#fbList .fbmsg').length >= 3", 8000);
     const fbState = await evalIn(ws, `JSON.stringify({open: document.getElementById('fbModal').classList.contains('open'), n: document.querySelectorAll('#fbList .fbmsg').length, title: document.querySelector('#fbModal .fbhead h2').textContent, replies: document.querySelectorAll('#fbList .fbReplyBtn').length})`);

@@ -35,7 +35,7 @@ const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const gs = fs.readFileSync(path.join(__dirname, '..', 'Code.gs'), 'utf8');
 const mock = fs.readFileSync(path.join(__dirname, '..', 'mock/mock-google.js'), 'utf8');
 
-test('feedback: index.html — icon ngay sau bell + modal + wiring', () => {
+test('feedback: index.html — icon cùng hàng Edit trong rangebar + modal + wiring', () => {
   assert.ok(html.includes('id="btnFeedback"'), 'missing #btnFeedback icon');
   assert.ok(html.includes('id="fbModal"'), 'missing #fbModal');
   assert.ok(html.includes('id="fbList"'), 'missing #fbList');
@@ -45,7 +45,11 @@ test('feedback: index.html — icon ngay sau bell + modal + wiring', () => {
   assert.ok(html.includes('gs(\'addFeedback\''), 'missing addFeedback call');
   assert.ok(html.includes('gs(\'replyFeedback\''), 'missing replyFeedback call');
   assert.ok(html.indexOf('id="btnIntro"') < html.indexOf('id="btnFeedback"'), 'feedback must come after bell');
-  assert.ok(html.indexOf('id="btnFeedback"') < html.indexOf('id="whoChip"'), 'feedback must come before whoChip');
+  var rb = html.split('id="rangebar"')[1].split('id="pillsRow"')[0];
+  assert.ok(rb.indexOf('id="rgEdit"') >= 0 && rb.indexOf('id="btnIntro"') >= 0 && rb.indexOf('id="btnFeedback"') >= 0, 'icons must live in rangebar');
+  assert.ok(rb.indexOf('id="rgEdit"') < rb.indexOf('id="btnIntro"'), 'icons must come after Edit (same row)');
+  var hactHead = html.split('<div class="hact">')[1].split('id="whoChip"')[0];
+  assert.ok(hactHead.indexOf('btnIntro') < 0 && hactHead.indexOf('btnFeedback') < 0, 'header must keep only whoChip');
   assert.ok(/fbIsAdmin\(\)/.test(html), 'missing admin role check for Reply gate');
   assert.ok(/data-fbid/.test(html), 'missing data-fbid reply gate');
   assert.ok(!html.includes('Feedback chung'), 'tieu de phai Feedback don gian');
