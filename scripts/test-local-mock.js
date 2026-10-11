@@ -182,40 +182,42 @@ async function main() {
     const L = load.err ? null : JSON.parse(load.value);
     check('App load + mock google.script.run', !!(ready && L && L.hasMock), L ? JSON.stringify(L) : load.err);
     check('Grid render ≥ 1 card từ mock', !!(L && L.cards >= 1), L && String(L.cards));
+
+
+
     const sf = await evalIn(ws, `JSON.stringify({
-      t: !!document.getElementById('sideFilterToggle'),
-      collapsed: !document.getElementById('sideFilterPanel').classList.contains('open'),
+      fs: document.querySelectorAll('#fStatus .dash-opt').length,
+      fk: document.querySelectorAll('#fKind .dash-opt').length,
       r: !!document.getElementById('sideFilterReset'),
-      chev: getComputedStyle(document.querySelector('#sideFilterToggle .fchev svg')).width
+      nav: document.querySelectorAll('.bnav #navMain,.bnav #navBacklog,.bnav #navLiq,.bnav #navPrint,.bnav #navFeed').length,
+      feed: !!document.getElementById('navFeed')
     })`);
     const SF = sf.err ? null : JSON.parse(sf.value);
-    await evalIn(ws, `document.getElementById('sideFilterToggle').click()`);
-    await waitUntil(ws, "document.getElementById('sideFilterPanel').classList.contains('open')", 3000);
     await evalIn(ws, `document.querySelectorAll('#fStatus .dash-opt')[1].click()`);
     await sleep(300);
+    const sfF = await evalIn(ws, `state.statusFilter`);
     await evalIn(ws, `document.getElementById('sideFilterReset').click()`);
     await sleep(300);
     const sfMsg = await evalIn(ws, `document.getElementById('msgMain').textContent`);
-    check('Sidebar: Bo loc thu gon mac dinh + Reset ve mac dinh', !!(SF && SF.t && SF.collapsed && SF.r && SF.chev === '18px' && /reset bộ lọc/i.test(sfMsg.value || '')), 'chev=' + (SF && SF.chev) + ' ' + sfMsg.value);
+    check('Sidebar T4: sang + groups mo + Reset ve mac dinh', !!(SF && SF.fs === 4 && SF.fk === 2 && SF.r && SF.nav === 5 && SF.feed && sfF.value === 'open' && /reset bộ lọc/i.test(sfMsg.value || '')), JSON.stringify(SF) + ' filt=' + sfF.value + ' ' + sfMsg.value);
     await evalIn(ws, `document.getElementById('railFilterBtn').dispatchEvent(new Event('mouseenter'))`);
     const flyOpen = await waitUntil(ws, "document.getElementById('railFlyout').classList.contains('open')", 3000);
     await evalIn(ws, `document.getElementById('railFlyout').dispatchEvent(new Event('mouseleave'))`);
     await sleep(400);
     const flyShut = await evalIn(ws, `!document.getElementById('railFlyout').classList.contains('open')`);
     check('Rail: hover pheu hien flyout + ra ngoai thu vao', !!(flyOpen && flyShut.value), String(flyShut.value));
-    await evalIn(ws, `document.getElementById('rgEdit').click()`);
-    await waitUntil(ws, "document.getElementById('rangeModal').classList.contains('open')", 3000);
-    const cal = await evalIn(ws, `JSON.stringify({
-      dimEdge: document.querySelectorAll('#rangeModal span.dim.edge').length,
-      dimIn: document.querySelectorAll('#rangeModal span.dim.in').length
-    })`);
-    const CAL = cal.err ? null : JSON.parse(cal.value);
-    check('Lich: o tran thang khong to (chi o that)', !!(CAL && CAL.dimEdge === 0 && CAL.dimIn === 0), cal.value);
-    await evalIn(ws, `document.querySelector('#rgPresets button[data-d="60"]').click(); document.getElementById('rgOk').click()`);
+    await evalIn(ws, `palOpen()`);
+    const palO = await waitUntil(ws, "document.getElementById('palModal').classList.contains('open')", 3000);
+    const palN = await evalIn(ws, `document.querySelectorAll('#pallist .palit').length`);
+    check('Palette: mo + du lenh', !!(palO && palN.value >= 12), String(palN.value));
+    await evalIn(ws, `document.getElementById('palIn').value='thanh lý';document.getElementById('palIn').dispatchEvent(new Event('input'))`);
     await sleep(300);
-    const rgW = await evalIn(ws, `document.getElementById('rgRangeLabel').textContent`);
-    const rgExp = await evalIn(ws, `(function(){var t=todayYMD_();return fmtRangeShort_(addDaysYMD_(t,-59),t);})()`);
-    check('Range mo rong 60d sau load', rgW.value === rgExp.value, rgW.value);
+    const palF = await evalIn(ws, `document.querySelectorAll('#pallist .palit').length`);
+    await evalIn(ws, `(function(){var its=document.querySelectorAll('#pallist .palit');for(var i=0;i<its.length;i++){if(its[i].textContent.indexOf('Thanh lý')===0){its[i].click();break;}}})()`);
+    const palGo = await waitUntil(ws, "document.getElementById('viewLiq').style.display === 'block'", 5000);
+    check('Palette: loc lenh + chon mo tab Thanh ly', !!(palF.value >= 1 && palGo), String(palF.value));
+    await evalIn(ws, `document.getElementById('ctxBar').click()`);
+    await waitUntil(ws, "document.getElementById('viewMain').style.display === 'block'", 5000);
 
     // Chi tiết + timeline (mock Item đã Resolve, có bill + mốc ADMIN)
     await evalIn(ws, `openDetail('Item.06-10-2026.2')`);
@@ -507,11 +509,11 @@ async function main() {
     await evalIn(ws, `document.getElementById('ctxBar').click()`);
     const bkMain = await evalIn(ws, `document.getElementById('viewMain').style.display`);
     check('Tab In Ma: Quay lai ve man hinh chinh', bkMain.value === 'block', String(bkMain.value));
-    await evalIn(ws, `document.querySelector('.pill[data-k="liq"]').click()`);
+    await evalIn(ws, `document.querySelector('.chip[data-k="liq"]').click()`);
     const liqOk = await waitUntil(ws, "document.querySelectorAll('#grid .card').length === 1"
       + " && document.querySelector('#grid .card .code').textContent.includes('Box.05-10-2026.9')", 5000);
     check('Loc Thanh Ly hien dung don thanh_ly', !!liqOk, String(liqOk));
-    await evalIn(ws, `document.querySelector('.pill[data-k=""]').click()`);
+    await evalIn(ws, `document.querySelector('.chip[data-k=""]').click()`);
     const dh = await evalIn(ws, `getComputedStyle(document.querySelector('.dhead')).position`);
     check('Detail header dinh khi cuon', dh.value === 'sticky', String(dh.value));
     const fs = await evalIn(ws, `parseFloat(getComputedStyle(document.getElementById('resolveBill')).fontSize)`);
@@ -541,11 +543,11 @@ async function main() {
       + " && document.querySelectorAll('#liqRows tr').length === 0"
       + " && document.getElementById('liqCodeWrap').style.display === 'none'", 8000);
     check('Thanh Ly: Confirm SPXVN chot lo + reset', !!lqDone, String(lqDone));
-    const th = await evalIn(ws, `JSON.stringify({rb: document.getElementById('rangebar').style.display, pl: document.getElementById('pillsRow').style.display, ctx: document.getElementById('ctxBar').style.display, txt: document.getElementById('ctxBar').textContent, tot: document.getElementById('liqTotalTop').innerText, cd: getComputedStyle(document.getElementById('ctxBar')).display, w: document.getElementById('ctxBar').getBoundingClientRect().width, pw: document.getElementById('ctxBar').parentElement.getBoundingClientRect().width})`);
+    const th = await evalIn(ws, `JSON.stringify({rb: document.getElementById('tbarMain').style.display, pl: document.getElementById('toolbar').style.display, bn: document.getElementById('bento').style.display, ctx: document.getElementById('ctxBar').style.display, txt: document.getElementById('ctxBar').textContent, tot: document.getElementById('liqTotalTop').innerText, cd: getComputedStyle(document.getElementById('ctxBar')).display, w: document.getElementById('ctxBar').getBoundingClientRect().width, pw: document.getElementById('ctxBar').parentElement.getBoundingClientRect().width})`);
     const TH = th.err ? null : JSON.parse(th.value);
-    check('Tab Thanh ly: an Range+pills, Quay lai gon + Tong 0', !!(TH && TH.rb === 'none' && TH.pl === 'none' && (TH.ctx === '' || TH.ctx === 'inline-flex') && (TH.cd === 'flex' || TH.cd === 'inline-flex') && TH.w > 0 && TH.w < TH.pw && TH.txt === '\u2039 Quay l\u1ea1i' && /T\u1ed5ng: 0/.test(TH.tot || '')), th.value);
+    check('Tab Thanh ly: an topbar/bento/toolbar, Quay lai gon + Tong 0', !!(TH && TH.rb === 'none' && TH.pl === 'none' && TH.bn === 'none' && (TH.ctx === '' || TH.ctx === 'inline-flex') && (TH.cd === 'flex' || TH.cd === 'inline-flex') && TH.w > 0 && TH.w < TH.pw && TH.txt === '\u2039 Quay l\u1ea1i' && /T\u1ed5ng: 0/.test(TH.tot || '')), th.value);
     await evalIn(ws, `document.getElementById('ctxBar').click()`);
-    const bkLiq = await waitUntil(ws, "document.getElementById('viewMain').style.display === 'block' && document.getElementById('pillsRow').style.display !== 'none' && document.getElementById('ctxBar').style.display === 'none'", 3000);
+    const bkLiq = await waitUntil(ws, "document.getElementById('viewMain').style.display === 'block' && document.getElementById('toolbar').style.display !== 'none' && document.getElementById('bento').style.display !== 'none' && document.getElementById('ctxBar').style.display === 'none'", 3000);
     check('Quay lai ve Danh sach hien lai filter', !!bkLiq, String(bkLiq));
     await evalIn(ws, `document.getElementById('navAccess').click()`);
     await sleep(400);
@@ -572,24 +574,28 @@ async function main() {
     check('Ma dung -> Ok chot, khoa lai', ce3.value === '{"ro":true,"btn":"Sửa","v":"Box.07-10-2026.88"}', ce3.value);
     await evalIn(ws, `document.getElementById('btnCloseCreate').click()`);
 
-    const hd = await evalIn(ws, `JSON.stringify({inHead: !!document.querySelector('header .scanbar #scanMain'), ph: document.getElementById('scanMain').placeholder})`);
-    check('Search tren header + placeholder moi', hd.value === '{"inHead":true,"ph":"Nhập thông tin để tìm kiếm..."}', hd.value);
-    const uni = await evalIn(ws, `JSON.stringify({inHead: !!document.querySelector('header #rangebar'), pills: !!document.querySelector('header #pillsRow'), sticky: getComputedStyle(document.querySelector('header')).position, capSilent: (function(){var m=document.getElementById('msgMain');m.textContent='';var c=document.querySelector('#grid .cap');if(c)c.click();return document.getElementById('msgMain').textContent;})()})`);
+    const hd = await evalIn(ws, `JSON.stringify({inHead: !!document.querySelector('header #srchPill #scanMain'), ph: document.getElementById('scanMain').placeholder})`);
+    check('Search T4 tren topbar + placeholder moi', hd.value === '{"inHead":true,"ph":"Tìm mã đơn, mô tả..."}', hd.value);
+    const uni = await evalIn(ws, `JSON.stringify({tb: !!document.querySelector('header #tbarMain'), srch: !!document.querySelector('header #srchPill'), tools: !!document.querySelector('#viewMain #toolbar'), bento: document.querySelectorAll('#bento .bt').length, sticky: getComputedStyle(document.querySelector('header')).position})`);
     const U = uni.err ? null : JSON.parse(uni.value);
-    check('Range + pills gop 1 khoi dinh trong header', !!(U && U.inHead && U.pills && U.sticky === 'sticky'), uni.value);
-    check('Bam caption khong hien thong bao', !!(U && U.capSilent === ''), uni.value);
+    check('Topbar T4 + toolbar + bento 8 tiles', !!(U && U.tb && U.srch && U.tools && U.bento >= 8 && U.sticky === 'sticky'), uni.value);
+    await evalIn(ws, `document.querySelector('#grid .cinfo').click()`);
+    const cardGo = await waitUntil(ws, "document.getElementById('detailModal').classList.contains('open')", 5000);
+    check('Bam card mo chi tiet', !!cardGo, String(cardGo));
+    await evalIn(ws, `document.getElementById('btnCloseDetail').click()`);
+    await waitUntil(ws, "!document.getElementById('detailModal').classList.contains('open')", 5000);
     const cp = await evalIn(ws, `JSON.stringify({pad: getComputedStyle(document.querySelector('header')).paddingTop, gap: getComputedStyle(document.querySelector('header')).gap, msgHidden: (function(){document.getElementById('msgMain').textContent='';return getComputedStyle(document.getElementById('msgMain')).display;})()})`);
     check('Mobile siet khe: header 8px + gap 4px + msg rong an', cp.value === '{"pad":"8px","gap":"4px","msgHidden":"none"}', cp.value);
-    const rv = await evalIn(ws, `JSON.stringify({bell: !!document.getElementById('btnIntro'), modal: !!document.getElementById('introModal'), first: document.querySelector('.hact').firstElementChild.id, inRange: !!document.querySelector('#rangebar .rg-icons #btnIntro')})`);
-    check('Nut chuong Gioi thieu cung hang Edit trong rangebar, header chi giu chip', rv.value === '{"bell":true,"modal":true,"first":"whoChip","inRange":true}', rv.value);
+    const rv = await evalIn(ws, `JSON.stringify({bell: !!document.getElementById('btnIntro'), modal: !!document.getElementById('introModal'), first: document.querySelector('.hact').firstElementChild.id, fb: document.getElementById('btnIntro').nextElementSibling.id, print: !!document.getElementById('btnPrintMain'), create: !!document.getElementById('btnCreateMain')})`);
+    check('Topbar T4: chuong + feedback + In Ma/Tao don trong hact', rv.value === '{"bell":true,"modal":true,"first":"btnIntro","fb":"btnFeedback","print":true,"create":true}', rv.value);
     await evalIn(ws, `document.getElementById('btnIntro').click()`);
     const ivOpen = await waitUntil(ws, "document.getElementById('introModal').classList.contains('open')", 3000);
     check('Chuong mo popup Gioi thieu', !!ivOpen, String(ivOpen));
     await evalIn(ws, `document.getElementById('btnCloseIntro').click()`);
-    // Feedback (popup messenger rieng, icon sau bell trong rangebar)
-    const fbPos = await evalIn(ws, `JSON.stringify((function(){var g=document.querySelector('#rangebar .rg-icons');var l=document.querySelector('#rangebar .rg-line');return {inLine: l.contains(g), afterL2: document.querySelector('#rangebar .rg-l2').nextElementSibling===g, next:document.getElementById('btnIntro').nextElementSibling.id};})())`);
+    // Feedback: icon sau chuong trong topbar hact
+    const fbPos = await evalIn(ws, `JSON.stringify((function(){var h=document.getElementById('hdrAct');return {inHact: h.contains(document.getElementById('btnFeedback')), afterBell: document.getElementById('btnIntro').nextElementSibling.id};})())`);
     const FBP = fbPos.err ? null : JSON.parse(fbPos.value);
-    check('Feedback: icon sau nut chuong, cung hang Edit', !!(FBP && FBP.inLine && FBP.afterL2 && FBP.next==='btnFeedback'), fbPos.value);
+    check('Feedback: icon sau nut chuong trong topbar', !!(FBP && FBP.inHact && FBP.afterBell==='btnFeedback'), fbPos.value);
     await evalIn(ws, `document.getElementById('btnFeedback').click()`);
     const fbOpen = await waitUntil(ws, "document.getElementById('fbModal').classList.contains('open') && document.querySelectorAll('#fbList .fbmsg').length >= 3", 8000);
     const fbState = await evalIn(ws, `JSON.stringify({open: document.getElementById('fbModal').classList.contains('open'), n: document.querySelectorAll('#fbList .fbmsg').length, title: document.querySelector('#fbModal .fbhead h2').textContent, replies: document.querySelectorAll('#fbList .fbReplyBtn').length})`);
@@ -650,16 +656,19 @@ async function main() {
     await evalIn(ws, `document.getElementById('blQClear').click(); document.getElementById('navMain').click()`);
     await waitUntil(ws, "document.getElementById('viewMain').style.display==='block'", 5000);
 
-    await evalIn(ws, `state.range={f:{y:2020,m:1,d:1},t:{y:2020,m:2,d:1}};renderGrid();`);
+    await evalIn(ws, `renderGrid();`);
     const z0 = await evalIn(ws, `document.querySelectorAll('#grid .card').length`);
-    check('Range cu -> luoi 0 don', z0.value === 0, String(z0.value));
+    check('Khong loc ngay: luoi hien toan bo cache', z0.value >= 1, String(z0.value));
     await evalIn(ws, `var s=document.getElementById('scanMain');s.value='áo thun';s.dispatchEvent(new Event('input'))`);
     await sleep(400);
     const z1 = await evalIn(ws, `document.querySelectorAll('#grid .card').length`);
     check('Search mo ta bypass Range', z1.value >= 1, String(z1.value));
-    await evalIn(ws, `var s=document.getElementById('scanMain');s.value='';s.dispatchEvent(new Event('input'));document.getElementById('rgEdit').click()`);
-    await waitUntil(ws, "document.getElementById('rangeModal').classList.contains('open')", 3000);
-    await evalIn(ws, `document.querySelector('#rgPresets button[data-d="30"]').click();document.getElementById('rgOk').click()`);
+    await evalIn(ws, `var s=document.getElementById('scanMain');s.value='';s.dispatchEvent(new Event('input'))`);
+    await sleep(300);
+    await evalIn(ws, `document.querySelector('#bento [data-kflt="resolve"]').click()`);
+    const tileF = await waitUntil(ws, "(function(){var c=document.querySelectorAll('#grid .card');if(!c.length)return false;for(var i=0;i<c.length;i++){var s=c[i].querySelector('.st');if(!s||!s.classList.contains('Resolve'))return false;}return true;})()", 5000);
+    check('Tile Resolve loc dung don resolve', !!tileF, String(tileF));
+    await evalIn(ws, `document.querySelector('#toolbar .chip[data-k=""]').click()`);
     await sleep(300);
     await evalIn(ws, `(function(){var old=document.getElementById('__probe');if(old)old.remove();var d=document.createElement('div');d.id='__probe';d.style.display='none';var im=document.createElement('img');d.appendChild(im);document.body.appendChild(d);im.onerror=function(){try{photoFallback(im,im.src,function(msg){d.setAttribute('data-msg',msg);});}catch(e){d.setAttribute('data-msg','JS:'+e.message);}};im.src='https://nonexistent.invalid/khong-co-anh.png';})()`);
     const dgOk = await waitUntil(ws, "(function(){var d=document.getElementById('__probe');var m=d&&d.getAttribute('data-msg')||'';return m.indexOf('[link]')>=0&&m.indexOf('thiếu mã ảnh')>=0;})()", 8000);

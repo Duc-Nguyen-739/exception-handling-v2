@@ -52,8 +52,10 @@ test('glass-theme: card kinh + bo lon, KHONG blur', () => {
   for (const b of cards) assert.ok(!b.includes('backdrop-filter'), 'card cam blur: ' + b);
 });
 
-test('glass-theme: sidebar PC giu toi, drawer giu vuong', () => {
-  assert.ok(style.includes('background:#1b2434'), 'sidebar PC phai giu toi');
+test('glass-theme: sidebar PC kinh sang T4, drawer giu vuong', () => {
+  assert.ok(!style.includes('#1b2434'), 'sidebar khong con nen toi');
+  assert.ok(style.includes('.bnav{position:fixed;left:0;top:0;bottom:0;width:250px'), 'sidebar giu so do');
+  assert.ok(style.includes('backdrop-filter:blur(var(--glass-blur))'), 'sidebar phai blur');
   assert.ok(style.includes('height:100%;max-height:none;border-radius:0'), 'drawer desktop phai giu vuong');
   assert.ok(style.includes('@supports not ((backdrop-filter:blur(1px))'), 'thieu fallback trinh duyet cu');
 });

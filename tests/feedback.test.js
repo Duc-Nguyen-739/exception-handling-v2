@@ -47,12 +47,9 @@ test('feedback: index.html — PC icons header canh chip, mobile Range + modal +
   assert.ok(html.indexOf('id="btnIntro"') < html.indexOf('id="btnFeedback"'), 'feedback must come after bell');
   var hactHead = html.split('id="hdrAct"')[1].split('id="whoChip"')[0];
   assert.ok(hactHead.indexOf('id="btnIntro"') >= 0 && hactHead.indexOf('id="btnFeedback"') >= 0, 'PC default: icons must live in header before chip');
-  var rb = html.split('id="rangebar"')[1].split('id="pillsRow"')[0];
-  assert.ok(rb.indexOf('id="rgIcons"') >= 0, 'rangebar must keep #rgIcons placeholder for mobile');
-  assert.ok(/function placeHdrIcons_/.test(html), 'missing placeHdrIcons_ mover');
-  var mv = html.split('function placeHdrIcons_')[1].split('</script>')[0];
-  assert.ok(mv.indexOf('max-width:899px') >= 0, 'mover must branch on mobile breakpoint');
-  assert.ok(mv.indexOf('rgIcons') >= 0 && mv.indexOf('hdrAct') >= 0, 'mover must target both header and rangebar');
+  assert.ok(!html.includes('rgIcons') && !html.includes('placeHdrIcons_'), 'bo mover icons (T4: icons co dinh trong topbar)');
+  assert.ok(html.includes("getElementById('navFeed').onclick"), 'sidebar Gop y phai mo feedback');
+  assert.ok(html.includes('data-goto="feed"') && html.includes('id="btFbBody"'), 'tile Gop y tren dashboard');
   assert.ok(/fbIsAdmin\(\)/.test(html), 'missing admin role check for Reply gate');
   assert.ok(/data-fbid/.test(html), 'missing data-fbid reply gate');
   assert.ok(!html.includes('Feedback chung'), 'tieu de phai Feedback don gian');

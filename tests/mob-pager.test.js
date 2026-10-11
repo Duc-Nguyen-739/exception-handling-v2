@@ -33,7 +33,7 @@ test('mob-pager: DOM + CSS mobile', () => {
   assert.ok(html.includes('id="gridPager"'), 'thieu thanh phan trang');
   assert.ok(html.includes('var MOB_PAGE=50'), 'thieu MOB_PAGE=50');
   assert.ok(html.includes('#btnCreateMain{display:none!important}'), 'mobile phai an +Create canh In Ma');
-  assert.ok(html.includes('#rangebar .rg-l1{flex:none}'), 'Display Range mobile phai 1 hang');
+  assert.ok(html.includes('#srchPill{flex:1 1 100%;order:3;max-width:none}'), 'search T4 mobile phai full-row');
   assert.ok(html.includes("document.getElementById('navCreate').onclick=document.getElementById('btnCreateTop').onclick"), 'navCreate phai mo form Create');
   assert.ok(html.includes('pgList.forEach'), 'renderGrid phai render theo lat trang');
   assert.ok(html.includes('id="mHide"'), 'thieu wrapper thu gon header');

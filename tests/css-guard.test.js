@@ -24,12 +24,13 @@ test('css-guard: #viewPrint khong margin-left', () => {
   for (const b of bodies) assert.ok(!/margin-left/.test(b), 'cam margin-left: ' + b);
 });
 
-test('css-guard: search + range + pills gop 1 khoi dinh trong header', () => {
-  assert.ok(html.indexOf('<header>') < html.indexOf('id="rangebar"'), 'rangebar phai trong header');
-  assert.ok(html.indexOf('id="pillsRow"') < html.indexOf('</header>'), 'pills phai trong header');
+test('css-guard: topbar T4 (title + search + actions) gop 1 khoi trong header', () => {
+  assert.ok(html.indexOf('<header>') < html.indexOf('id="tbarMain"'), 'tbar phai trong header');
+  assert.ok(html.indexOf('id="toolbar"') < html.indexOf('</main>') || html.indexOf('id="toolbar"') > html.indexOf('</header>'), 'toolbar phai sau header (trong main)');
+  assert.ok(!html.includes('id="rangebar"') && !html.includes('id="pillsRow"'), 'bo Display Range + pills cu');
   assert.ok(!html.includes('--hdrH') && !html.includes('syncSticky_'), 'bo do hdrH');
   assert.ok(!html.includes('mới mở chi tiết'), 'bo thong bao caption');
-  assert.ok(html.includes('header #rangebar{grid-column:1/-1;grid-row:3;margin:4px 0}'), 'mobile range sat');
+  assert.ok(html.includes('#srchPill{flex:1 1 100%;order:3;max-width:none}'), 'mobile search full-row duoi title');
   assert.ok(html.includes('header{grid-template-columns:1fr auto;padding:8px 10px;gap:4px}'), 'mobile header siet');
   assert.ok(html.includes('#msgMain:empty{display:none}'), 'msg rong tu an');
   const headers = rulesFor('header').join(';') + html.slice(html.indexOf('/* ===== header ===== */'), html.indexOf('/* ===== header ===== */') + 400);
@@ -61,8 +62,8 @@ test('css-guard: sidebar mo thi header chua le trai 262px (khong che range + pil
 
 test('css-guard: ctxBar ngu canh thay filter o tab khac (mau B)', () => {
   assert.ok(html.indexOf('id="ctxBar"') < html.indexOf('</header>'), 'ctxBar phai trong header');
-  assert.ok(html.includes('header #ctxBar{grid-column:1/-1;grid-row:4;margin-bottom:0}'), 'thieu ctxBar mobile row 4');
-  assert.ok(html.includes('header #ctxBar{grid-column:1/-1;grid-row:3;margin-bottom:0}'), 'thieu ctxBar desktop row 3');
+  assert.ok(html.includes('header #ctxBar{grid-column:1/-1;grid-row:3;margin-bottom:0}'), 'thieu ctxBar mobile');
+  assert.ok(html.includes('header #ctxBar{grid-column:1/-1;grid-row:3;margin-bottom:0}'), 'thieu ctxBar desktop');
   assert.ok(html.includes('function syncTabHeader(tab)'), 'thieu syncTabHeader');
   assert.ok(html.includes("syncTabHeader(on?'liq':'list')"), 'showLiq phai sync header');
   assert.ok(html.includes("syncTabHeader(on?'print':'list')"), 'showPrint phai sync header');
