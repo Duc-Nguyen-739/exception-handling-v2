@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>09 — Admin Role (SPX Mất Bill)</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--pri:#5b3df6;--ink:#1a1225;--mut:#6b5a7a;--line:#e2d9f0;--soft:#f5f2fa;--card:#fff;--bg:#f7f3fa;--red:#e34d4d;--green:#11b96a;--amber:#f79009;--ff:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',monospace;--r:14px;--pad:18px;--fs:13.5px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:1.55}
+  .wrap{min-height:100vh;display:flex;flex-direction:column}
+  header{position:sticky;top:0;z-index:50;background:rgba(247,243,250,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:12px var(--pad);display:flex;align-items:center;gap:10px}
+  header .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--pri),#8f7ae0);display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;box-shadow:0 3px 10px rgba(91,61,246,.25)}
+  header h1{font-size:15px;font-weight:800;letter-spacing:-.015em}
+  header span{font-size:10.5px;color:var(--mut);font-weight:600}
+  .shell{position:absolute;inset:0;display:flex;background:var(--bg);overflow:hidden}
+  .main{flex:1 1 auto;min-height:0;display:flex;gap:14px;padding:var(--pad);overflow:hidden}
+  .content{flex:1 1 auto;overflow:auto;display:flex;flex-direction:column;gap:14px}
+  h1{font-size:20px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  h1::before{content:'';width:5px;height:22px;border-radius:3px;background:var(--pri)}
+  .sub{font-size:12px;color:var(--mut);font-weight:600;margin-bottom:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 4px 14px rgba(26,18,37,.04);transition:.18s}
+  .card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(26,18,37,.08);border-color:#d0c8e8}
+  .card h3{font-size:13px;font-weight:800;margin-bottom:8px;letter-spacing:-.01em}
+  .user-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0ebf5}
+  .user-row:last-child{border-bottom:0}
+  .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pri),#8f7ae0);display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px;flex:none}
+  .user-info{flex:1}
+  .user-info b{font-size:12px;font-weight:700;color:var(--ink)}
+  .user-info span{display:block;font-size:10.5px;color:var(--mut);font-weight:600}
+  .role-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px;font:inherit;font-weight:700;font-size:11px;color:var(--mut);cursor:pointer;transition:.14s}
+  .role-btn:hover{border-color:var(--pri);color:var(--pri)}
+  .role-btn.admin{background:var(--pri);color:#fff;border-color:var(--pri)}
+  .section{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 6px 20px rgba(26,18,37,.04)}
+  .section h2{font-size:13px;font-weight:800;margin-bottom:10px;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+  .section h2::before{content:'';width:4px;height:18px;border-radius:3px;background:var(--pri)}
+  .btn{border:0;border-radius:999px;padding:8px 16px;font:inherit;font-weight:700;font-size:12px;cursor:pointer;background:var(--pri);color:#fff;box-shadow:0 3px 10px rgba(91,61,246,.25);transition:.16s}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 6px 18px rgba(91,61,246,.35)}
+  .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--mut);box-shadow:none}
+  .btn.ghost:hover{border-color:var(--pri);color:var(--ink)}
+  .badge{font:700 9px var(--fm);padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+  .badge.admin{background:#eae4f5;color:#5b3df6}
+  .badge.staff{background:#eef1f4;color:#5a6e75}
+  .badge.deploy{background:#fff3e0;color:#b36b00}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">SPX</div>
+    <h1>Quyền truy cập</h1>
+    <span>ADMIN sửa full · STAFF tạo/Resolve/Thanh lý · Seed từ ADMIN_EMAILS</span>
+  </header>
+  <div class="shell">
+    <main class="main">
+      <section class="content">
+        <h1>Quyền truy cập · SPX</h1>
+        <p class="sub">ADMIN sửa mọi task trong modal Edit gọn không cuộn. STAFF tạo/Resolve/Thanh lý khi còn Lưu kho + thấy Edit (chỉ sửa mô tả/ghi chú). Seed ADMIN từ Script Properties ADMIN_EMAILS.</p>
+
+        <div class="grid" aria-label="Danh sách người dùng">
+          <article class="card" onclick="alert('Mở chi tiết quyền ADMIN: sửa full + quản lý role + chẩn đoán danh tính')">
+            <h3>ADMIN · Toàn quyền</h3>
+            <div class="user-row">
+              <div class="avatar">TD</div>
+              <div class="user-info"><b>Trần Đức</b><span>admin@company.vn · Deploy tài khoản</span></div>
+              <span class="badge admin">ADMIN</span>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:var(--mut);line-height:1.55">
+              <div>✓ Sửa mọi task (Edit full)</div>
+              <div>✓ Quản lý quyền (tab Role)</div>
+              <div>✓ Chẩn đoán danh tính (chỉ đọc)</div>
+            </div>
+          </article>
+          <article class="card" onclick="alert('Mở chi tiết quyền STAFF: tạo/Resolve/Thanh lý + Edit mô tả/ghi chú')">
+            <h3>STAFF · Nhân viên kho</h3>
+            <div class="user-row">
+              <div class="avatar" style="background:linear-gradient(135deg,#2a6b9e,#58a0e6)">HN</div>
+              <div class="user-info"><b>Hoàng Nga</b><span>nga@company.vn</span></div>
+              <span class="badge staff">STAFF</span>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:var(--mut);line-height:1.55">
+              <div>✓ Tạo đơn mới (Box/Item)</div>
+              <div>✓ Resolve + Thanh lý</div>
+              <div>✓ Edit mô tả/g ghi chú (mốc hiện email)</div>
+            </div>
+          </article>
+          <article class="card" onclick="alert('STAFF: quyền giới hạn, không thấy tab Role + không sửa trạng thái')">
+            <h3>STAFF · Nhân viên vận chuyển</h3>
+            <div class="user-row">
+              <div class="avatar" style="background:linear-gradient(135deg,#c0392b,#e07a5f)">MT</div>
+              <div class="user-info"><b>Minh Thành</b><span>thanh@company.vn</span></div>
+              <span class="badge staff">STAFF</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="section">
+          <h2>Phân quyền chi tiết</h2>
+          <table style="width:100%;border-collapse:collapse;font-size:11.5px">
+            <thead>
+              <tr style="border-bottom:1.5px solid var(--line)">
+                <th style="padding:7px 8px;font-weight:700;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em">Chức năng</th>
+                <th style="padding:7px 8px;font-weight:700;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em">ADMIN</th>
+                <th style="padding:7px 8px;font-weight:700;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em">STAFF</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--line)"><td style="padding:8px 8px;font-weight:600">Tạo đơn mới</td><td style="padding:8px 8px"><span class="badge admin">Có</span></td><td style="padding:8px 8px"><span class="badge staff">Có</span></td></tr>
+              <tr style="border-bottom:1px solid var(--line)"><td style="padding:8px 8px;font-weight:600">Resolve bill</td><td style="padding:8px 8px"><span class="badge admin">Có</span></td><td style="padding:8px 8px"><span class="badge staff">Có</span></td></tr>
+              <tr style="border-bottom:1px solid var(--line)"><td style="padding:8px 8px;font-weight:600">Thanh lý lô</td><td style="padding:8px 8px"><span class="badge admin">Có</span></td><td style="padding:8px 8px"><span class="badge staff">Có</span></td></tr>
+              <tr style="border-bottom:1px solid var(--line)"><td style="padding:8px 8px;font-weight:600">Edit mô tả / ghi chú</td><td style="padding:8px 8px"><span class="badge admin">Có</span></td><td style="padding:8px 8px"><span class="badge staff">Có</span></td></tr>
+              <tr style="border-bottom:1px solid var(--line)"><td style="padding:8px 8px;font-weight:600">Edit full (ảnh + trạng thái)</td><td style="padding:8px 8px"><span class="badge admin">Có</span></td><td style="padding:8px 8px"><span style="font-family:var(--fm);font-size:10px;color:var(--red)">✕ Không</span></td></tr>
+              <tr><td style="padding:8px 8px;font-weight:600">Quản lý quyền (tab Role)</td><td style="padding:8px 8px"><span class="badge admin">Có</span></td><td style="padding:8px 8px"><span style="font-family:var(--fm);font-size:10px;color:var(--red)">✕ Không</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <h2>Cài đặt quyền (mô phỏng)</h2>
+          <form onsubmit="event.preventDefault(); alert('Đổi quyền: email + role → lưu sheet Users + sync')">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <input type="email" placeholder="Email người dùng…" value="thanh@company.vn" style="flex:1 1 240px;padding:9px 12px;border-radius:8px;border:1.5px solid var(--line);font:inherit;font-size:12px">
+              <select style="padding:9px 10px;border-radius:8px;border:1.5px solid var(--line);font:inherit;font-size:12px"><option>STAFF</option><option>ADMIN</option></select>
+              <button class="btn" onclick="alert('Lưu quyền vào sheet Users → sync quyền truy cập')">Lưu quyền</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+</body>
+</html>

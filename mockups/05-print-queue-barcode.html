@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>05 — Print Queue + Barcode (SPX Mất Bill)</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--pri:#2a6b9e;--ink:#0a1525;--mut:#5a7085;--line:#d6dde6;--soft:#f0f4f8;--card:#fff;--bg:#f6f8fa;--red:#e34d4d;--green:#11b96a;--amber:#f79009;--ff:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',monospace;--r:12px;--pad:18px;--fs:13.5px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:1.55}
+  .wrap{min-height:100vh;display:flex;flex-direction:column}
+  .top{position:sticky;top:0;z-index:100;background:rgba(246,248,250,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:12px var(--pad);display:flex;align-items:center;gap:12px}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--pri),#58a0e6);display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;box-shadow:0 3px 10px rgba(42,107,158,.25)}
+  .ttl b{font-size:16px;font-weight:800;letter-spacing:-.015em}
+  .ttl s{display:block;font-size:10.5px;color:var(--mut);font-weight:600;margin-top:1px}
+  .main{display:grid;grid-template-columns:1fr 400px;gap:0;min-height:calc(100vh - 66px)}
+  @media(max-width:1000px){.main{grid-template-columns:1fr}}
+  .left{padding:var(--pad);overflow:auto}
+  .right{background:#fff;border-left:1px solid var(--line);padding:var(--pad);overflow:auto;box-shadow:-6px 0 20px rgba(10,21,37,.04)}
+  h1{font-size:20px;font-weight:800;margin-bottom:6px;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+  h1::before{content:'';width:5px;height:22px;border-radius:3px;background:var(--pri)}
+  .sub{font-size:12px;color:var(--mut);font-weight:600;margin-bottom:16px}
+  .tabs{display:flex;gap:4px;margin-bottom:14px;padding-bottom:1px;overflow-x:auto}
+  .tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font:inherit;font-weight:700;font-size:11.5px;color:var(--mut);cursor:pointer;white-space:nowrap;transition:.14s}
+  .tabs button.on{background:var(--pri);color:#fff;border-color:var(--pri);box-shadow:0 3px 10px rgba(42,107,158,.25)}
+  .tabs button:hover{border-color:var(--pri);color:var(--pri)}
+  .tabs button.on:hover{filter:brightness(1.08)}
+  .section{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 4px 14px rgba(10,21,37,.03);margin-bottom:14px}
+  .section h2{font-size:13px;font-weight:800;margin-bottom:10px;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:720px){.grid-2{grid-template-columns:1fr}}
+  .label{font-size:10.5px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .code-box{font-family:var(--fm);font-size:14px;font-weight:700;color:var(--ink);background:var(--soft);padding:10px 12px;border-radius:8px;border:1px solid var(--line);word-break:break-word;letter-spacing:.02em}
+  .code-box .kind{font-size:11px;color:var(--mut);font-weight:600;text-transform:uppercase;margin-right:6px}
+  .btn{border:0;border-radius:999px;padding:8px 16px;font:inherit;font-weight:700;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.16s;background:var(--pri);color:#fff;box-shadow:0 3px 10px rgba(42,107,158,.2)}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 6px 18px rgba(42,107,158,.3)}
+  .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--mut);box-shadow:none}
+  .btn.ghost:hover{border-color:var(--pri);color:var(--pri)}
+  .btn.green{background:var(--green);box-shadow:0 3px 10px rgba(17,185,106,.25)}
+  .btn.green:hover{filter:brightness(1.08);box-shadow:0 6px 18px rgba(17,185,106,.35)}
+  .list{display:flex;flex-direction:column;gap:8px}
+  .item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:12px;transition:.12s;cursor:pointer}
+  .item:hover{border-color:var(--pri);box-shadow:0 2px 8px rgba(42,107,158,.06)}
+  .item .dot{width:10px;height:10px;border-radius:50%;background:var(--red);flex:none}
+  .item .dot.ok{background:var(--green)}
+  .item .code{font-family:var(--fm);font-weight:700;color:var(--ink);min-width:110px}
+  .item .desc{flex:1;color:var(--ink);font-weight:600}
+  .item .time{font-family:var(--fm);font-size:10.5px;color:var(--mut);white-space:nowrap}
+  .badge{font:700 9px var(--fm);padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+  .badge.wait{background:#fff3e0;color:#b36b00}
+  .badge.print{background:#e8f6ee;color:var(--green)}
+  .badge.claim{background:#e6f0fa;color:var(--pri)}
+  .print-preview{background:#fff;border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+  .print-preview .qr{width:90px;height:90px;background:#1a1205;border-radius:8px;display:grid;place-items:center;color:#fff;font-size:30px}
+  .print-preview h3{font-size:14px;font-weight:800}
+  .print-preview p{font-size:11px;color:var(--mut)}
+  table{width:100%;border-collapse:collapse;font-size:11.5px}
+  th{font-weight:700;text-align:left;padding:7px 8px;color:var(--mut);border-bottom:1px solid var(--line);font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+  td{padding:7px 8px;border-bottom:1px solid var(--line);font-weight:600;color:var(--ink)}
+  tr:hover td{background:#f6f8fa}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">SPX</div>
+    <div class="ttl"><b>In mã · Barcode</b><s>QR · Barcode Code128 · In từ xa</s></div>
+  </header>
+  <div class="main">
+    <section class="left">
+      <h1>In mã & Hàng in</h1>
+      <p class="sub">In từ điện thoại → gửi trạm laptop. Mỗi job in nghỉ 10s trước khi nhận tiếp.</p>
+
+      <div class="tabs" aria-label="Chế độ in">
+        <button class="on" onclick="setTab(this)">In 1 mã</button>
+        <button onclick="setTab(this)">In nhiều mã</button>
+        <button onclick="setTab(this)">Hàng in</button>
+      </div>
+
+      <div class="grid-2">
+        <div class="section">
+          <h2>Thông tin mã</h2>
+          <div class="label">Loại</div>
+          <div class="code-box" onclick="alert('Chọn loại: Box (thùng) hoặc Item (kiện)')"><span class="kind">BOX</span>BOX.12-10.003</div>
+          <div class="label" style="margin-top:10px">Mô tả</div>
+          <p style="font-size:12px;color:#3a4a50;font-weight:600">Thùng carton 45×32×28 · Đơn SPX từ kho A → B</p>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" onclick="alert('In 1 mã: tạo job in, gửi trạm, nghỉ 10s')">🖨 In mã này</button>
+            <button class="btn ghost" onclick="alert('Xem trước khổ 4x6in')">Xem trước</button>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Xem trước in</h2>
+          <div class="print-preview" aria-label="Xem trước tem in 4x6in">
+            <div class="qr" aria-label="QR minh họa">◼</div>
+            <h3>BOX.12-10.003</h3>
+            <p>Thùng carton · SPX · 4×6in</p>
+            <span class="badge print">Sẵn sàng in</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>In nhiều mã (giữ chỗ)</h2>
+        <p style="font-size:11.5px;color:var(--mut);margin-bottom:10px">Chọn loại + số lượng (1–10) → server giữ chỗ vào PrintedCodes → in cả dãy.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <select style="padding:7px 10px;font-size:12px;border-radius:8px;border:1.5px solid var(--line);font:inherit"><option>Box</option><option>Item</option></select>
+          <input type="number" value="3" min="1" max="10" style="width:80px;padding:7px 10px;font-size:12px;border-radius:8px;border:1.5px solid var(--line);font:inherit">
+          <button class="btn green" onclick="alert('Giữ chỗ 3 mã: append PrintedCodes trong lock → in cả dãy bằng 1 lệnh')">✓ Giữ chỗ + In</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Hàng in (PrintQueue)</h2>
+        <table aria-label="Danh sách job in">
+          <thead><tr><th>Job</th><th>Mã</th><th>Trạm</th><th>Trạng thái</th></tr></thead>
+          <tbody>
+            <tr onclick="alert('Claim job #J-12 → in → ack')"><td>#J-12</td><td>BOX.12-10.003</td><td>Trạm A</td><td><span class="badge claim">Chờ claim</span></td></tr>
+            <tr onclick="alert('Đã claim, in, nghỉ 10s')"><td>#J-11</td><td>ITEM.12-10.007</td><td>Trạm B</td><td><span class="badge print">Đã in</span></td></tr>
+            <tr onclick="alert('Claim job #J-13')"><td>#J-13</td><td>BOX.11-10.015</td><td>Trạm A</td><td><span class="badge claim">Chờ claim</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <aside class="right" aria-label="Chi tiết in và trạng thái">
+      <h1>Trạng thái trạm</h1>
+      <p class="sub">Laptop poll 3s · Lock claim · In xong nghỉ 10s</p>
+
+      <div class="section">
+        <h2>Trạm A</h2>
+        <div style="font-size:12px;line-height:1.7;color:#3a4a50">
+          <div style="display:flex;justify-content:space-between"><span>Trạng thái</span><span style="font-weight:700;color:var(--green)">Hoạt động</span></div>
+          <div style="display:flex;justify-content:space-between"><span>Job hiện tại</span><span style="font-family:var(--fm);font-weight:600">#J-12</span></div>
+          <div style="display:flex;justify-content:space-between"><span>In cuối</span><span style="font-family:var(--fm);font-size:10px;color:var(--mut)">10:35</span></div>
+          <div style="display:flex;justify-content:space-between"><span>Tiếp theo</span><span style="font-family:var(--fm);font-size:10px;color:#c8a34e">10:46</span></div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn" onclick="alert('Claim #J-12 từ trạm A')">✓ Claim</button>
+          <button class="btn ghost" onclick="alert('In nhiều mã từ trạm A')">In nhiều</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Trạm B</h2>
+        <div style="font-size:12px;line-height:1.7;color:#3a4a50">
+          <div style="display:flex;justify-content:space-between"><span>Trạng thái</span><span style="font-weight:700;color:var(--green)">Hoạt động</span></div>
+          <div style="display:flex;justify-content:space-between"><span>Job hiện tại</span><span style="font-family:var(--fm);font-weight:600">—</span></div>
+          <div style="display:flex;justify-content:space-between"><span>In cuối</span><span style="font-family:var(--fm);font-size:10px;color:var(--mut)">10:35</span></div>
+        </div>
+        <div style="margin-top:10px">
+          <button class="btn ghost" style="width:100%;justify-content:center" onclick="alert('Poll #J-13 → claim → in → ack')">↻ Chờ job mới</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Mã đã giữ chỗ (PrintedCodes)</h2>
+        <div class="list" aria-label="Danh sách mã đã giữ chỗ">
+          <div class="item" onclick="alert('Mã giữ chỗ Box: có thể in hoặc hủy')">
+            <span class="dot ok"></span>
+            <span class="code">BOX.12-10.021</span>
+            <span class="desc">In nhiều mã — giữ chỗ</span>
+            <span class="time">10:40</span>
+          </div>
+          <div class="item" onclick="alert('Item giữ chỗ: sẵn sàng in')">
+            <span class="dot ok"></span>
+            <span class="code">ITEM.12-10.009</span>
+            <span class="desc">In 1 mã</span>
+            <span class="time">10:39</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+<script>
+  function setTab(btn){
+    document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+  }
+</script>
+</body>
+</html>

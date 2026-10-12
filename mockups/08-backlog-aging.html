@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>08 — Backlog + Aging (SPX Mất Bill)</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--pri:#2a9d8f;--ink:#0f1a17;--mut:#6b7f72;--line:#dde8e0;--soft:#f2f6f3;--card:#fff;--bg:#f7faf8;--red:#e34d4d;--green:#11b96a;--amber:#f79009;--ff:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',monospace;--r:12px;--pad:16px;--fs:13px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:1.55}
+  .wrap{min-height:100vh;display:flex;flex-direction:column}
+  header{position:sticky;top:0;z-index:50;background:rgba(247,250,248,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:10px var(--pad);display:flex;align-items:center;gap:10px}
+  header .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--pri),#4ec8a6);display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;box-shadow:0 3px 10px rgba(42,157,143,.25)}
+  header h1{font-size:15px;font-weight:800;letter-spacing:-.015em}
+  header span{font-size:10.5px;color:var(--mut);font-weight:600}
+  .main{padding:var(--pad);max-width:1200px;margin:0 auto;width:100%}
+  h1{font-size:20px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  h1::before{content:'';width:5px;height:22px;border-radius:3px;background:var(--pri)}
+  .sub{font-size:12px;color:var(--mut);font-weight:600;margin-bottom:14px}
+  .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding:8px 10px;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 2px 8px rgba(16,24,40,.03)}
+  .toolbar input{flex:1 1 260px;padding:7px 10px;border:1.5px solid var(--line);border-radius:8px;font:inherit;font-size:12px;background:#fff;outline:none}
+  .toolbar input:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(42,157,143,.08)}
+  .toolbar select{padding:7px 9px;border-radius:8px;border:1.5px solid var(--line);font:inherit;font-size:11.5px;background:#fff;outline:none}
+  .toolbar .btn{border:0;border-radius:999px;padding:7px 14px;font:inherit;font-weight:700;font-size:11.5px;cursor:pointer;background:var(--pri);color:#fff;box-shadow:0 3px 10px rgba(42,157,143,.2);transition:.16s}
+  .toolbar .btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .toolbar .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--mut);box-shadow:none}
+  .toolbar .btn.ghost:hover{border-color:var(--pri);color:var(--ink)}
+  .meta{display:flex;align-items:center;gap:12px;margin-bottom:10px;font:700 11px var(--fm);color:var(--mut)}
+  .table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:0 6px 20px rgba(16,24,40,.04)}
+  th{font-weight:700;text-align:left;padding:10px 12px;color:var(--mut);border-bottom:1.5px solid var(--line);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;background:#f2f6f3;white-space:nowrap}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:11.5px;font-weight:600;color:var(--ink)}
+  tr:hover td{background:#f6faf8}
+  .badge{font:700 9px var(--fm);padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+  .badge.chua{background:#fff3e0;color:#b36b00}
+  .badge.tim{background:#e8f6ee;color:var(--green)}
+  .badge.thanh{background:#eef1f4;color:#5a6e75}
+  .badge.hot{background:#ffece6;color:#c0392b}
+  .age{font-family:var(--fm);font-size:11px;color:var(--mut);white-space:nowrap}
+  .sort{font-family:var(--fm);font-size:10.5px;color:var(--mut);cursor:pointer;user-select:none}
+  .sort::after{content:' ▼';font-size:8px;opacity:.5}
+  .pagination{display:flex;align-items:center;gap:6px;margin-top:12px}
+  .pagination button{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font:inherit;font-size:11px;font-weight:700;color:var(--mut);cursor:pointer;transition:.12s}
+  .pagination button:hover{border-color:var(--pri);color:var(--pri)}
+  .pagination button.active{background:var(--pri);color:#fff;border-color:var(--pri)}
+  .chip{font:700 9.5px var(--fm);padding:3px 8px;border-radius:999px;white-space:nowrap}
+  .chip.age{background:#fff3e0;color:#b36b00}
+  .search-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .search-row .tag{padding:3px 10px;border-radius:999px;font:700 10px var(--fm);background:#e8f6ee;color:var(--green);border:1px solid #c8e6d6;cursor:pointer;transition:.14s}
+  .search-row .tag:hover{filter:brightness(.95)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">SPX</div>
+    <h1>Backlog · Tuổi tồn</h1>
+    <span>Lazy-load · 50 dòng/trang · Filter Status/Aging · Search Product/Return/Buyer</span>
+  </header>
+  <main class="main">
+    <h1>Backlog · Đơn hàng mất bill</h1>
+    <p class="sub">Tab Backlog ẩn trên mobile · Lazy-load toàn sheet khi vào tab (vào lại tải lại) · Sort mọi cột · Filter Status / Aging.</p>
+
+    <div class="toolbar" aria-label="Công cụ tìm kiếm và lọc">
+      <input type="text" placeholder="Tìm kiếm toàn cục: mã, mô tả, buyer, return…" value="SPX" aria-label="Tìm kiếm toàn cục">
+      <select aria-label="Lọc trạng thái"><option>Tất cả trạng thái</option><option>Chưa xử lý</option><option>Đã tìm bill</option><option>Thanh lý</option></select>
+      <select aria-label="Lọc tuổi tồn"><option>Tất cả tuổi</option><option>&lt; 3 ngày</option><option>3–7 ngày</option><option>&gt; 7 ngày</option></select>
+      <button class="btn" onclick="alert('Làm mới dữ liệu Backlog từ sheet')">↻ Tải lại</button>
+      <button class="btn ghost" onclick="alert('Copy Shipment ID của dòng đang chọn')">Copy ID</button>
+    </div>
+
+    <div class="meta" aria-label="Thông tin meta trang">
+      <span>50 dòng · Trang <b>1 / 3</b></span>
+      <span>Tổng COGS lọc: <b style="font-family:var(--fm);font-size:13px;color:var(--ink)">128.450.000 VND</b></span>
+      <span>Cập nhật: <b>12-10 10:45</b></span>
+    </div>
+
+    <div class="search-row" aria-label="Tags tìm kiếm nhanh">
+      <span class="tag" onclick="alert('Lọc theo buyer SPX')">Buyer: SPX</span>
+      <span class="tag" onclick="alert('Lọc theo return A→B')">Return: A→B</span>
+      <span class="tag" onclick="alert('Lọc sản phẩm: hàng tổng hợp')">SP: Hàng tổng hợp</span>
+    </div>
+
+    <table class="table" aria-label="Danh sách backlog">
+      <thead>
+        <tr>
+          <th>Mã đơn</th><th>Loại</th><th>Mô tả</th><th>Tuổi</th><th>Trạng thái</th><th>Buyer</th><th>COGS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr onclick="alert('Mở chi tiết BOX.12-10.003')">
+          <td><b>BOX.12-10.003</b></td><td>Thùng</td><td>Đơn SPX từ kho A → B, thiếu bill vận chuyển</td><td><span class="age">3h</span></td><td><span class="badge chua">Chưa xử lý</span></td><td>SPX</td><td style="font-family:var(--fm);font-size:10.5px">2.450.000</td>
+        </tr>
+        <tr onclick="alert('Mở chi tiết ITEM.12-10.007')">
+          <td><b>ITEM.12-10.007</b></td><td>Kiện</td><td>Hàng điện tử tổng hợp · 1 ảnh sản phẩm</td><td><span class="age">5h</span></td><td><span class="badge chua">Chưa xử lý</span></td><td>SPX</td><td style="font-family:var(--fm);font-size:10.5px">850.000</td>
+        </tr>
+        <tr onclick="alert('Mở chi tiết BOX.11-10.015')">
+          <td><b>BOX.11-10.015</b></td><td>Thùng</td><td>Thùng carton · Đơn từ đối tác SPX, bill #4821</td><td><span class="age">1d</span></td><td><span class="badge tim">Tìm bill</span></td><td>SPX</td><td style="font-family:var(--fm);font-size:10.5px">4.200.000</td>
+        </tr>
+        <tr onclick="alert('Mở chi tiết BOX.11-10.009')">
+          <td><b>BOX.11-10.009</b></td><td>Thùng</td><td>Thùng carton · Thanh lý theo lô 3 mã</td><td><span class="age">4d</span></td><td><span class="badge thanh">Thanh lý</span></td><td>SPX</td><td style="font-family:var(--fm);font-size:10.5px">3.100.000</td>
+        </tr>
+        <tr onclick="alert('Mở chi tiết BOX.10-10.021')">
+          <td><b>BOX.10-10.021</b></td><td>Thùng</td><td>Thùng giấy A4 · Tài liệu nội bộ, thiếu hóa đơn</td><td><span class="age">6h</span></td><td><span class="badge chua">Chưa xử lý</span></td><td>SPX</td><td style="font-family:var(--fm);font-size:10.5px">1.200.000</td>
+        </tr>
+        <tr onclick="alert('Mở chi tiết BOX.09-10.031')">
+          <td><b>BOX.09-10.031</b></td><td>Thùng</td><td>Thùng carton cũ · Đơn từ kho C → D</td><td><span class="age">3d</span></td><td><span class="badge chua">Chưa xử lý</span></td><td>SPX</td><td style="font-family:var(--fm);font-size:10.5px">5.600.000</td>
+        </tr>
+        <tr onclick="alert('Mở chi tiết ITEM.09-10.015')">
+          <td><b>ITEM.09-10.015</b></td><td>Kiện</td><td>Kiện nhựa đen · Hàng tổng hợp</td><td><span class="age">5d</span></td><td><span class="badge thanh">Thanh lý</span></td><td>SPX</td><td style="font-family:var(--fm);font-size:10.5px">2.100.000</td>
+        </tr>
+        <tr onclick="alert('Mở chi tiết BOX.08-10.042')">
+          <td><b>BOX.08-10.042</b></td><td>Thùng</td><td>Thùng gỗ 60×40 · Hàng lỗi bao bì, chờ duyệt</td><td><span class="age">8d</span></td><td><span class="badge hot">Tuổi 72h+</span></td><td>SPX</td><td style="font-family:var(--fm);font-size:10.5px">8.900.000</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <nav class="pagination" aria-label="Phân trang">
+      <button onclick="alert('Về trang trước')">←</button>
+      <button class="active" onclick="alert('Trang 1 hiện tại')">1</button>
+      <button onclick="alert('Chuyển trang 2')">2</button>
+      <button onclick="alert('Chuyển trang 3')">3</button>
+      <button onclick="alert('Chuyển trang tiếp')">→</button>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

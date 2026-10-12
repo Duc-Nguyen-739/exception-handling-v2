@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>03 — Card Grid + Drawer Chi tiết (SPX Mất Bill)</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--pri:#2f6df6;--ink:#0f1a17;--mut:#6b7f72;--line:#e2eaf0;--soft:#f2f6fa;--card:#fff;--bg:#f4f7fb;--red:#e34d4d;--green:#11b96a;--amber:#f79009;--ff:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',monospace;--r:14px;--pad:18px;--fs:13.5px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#e9eef2;color:var(--ink);font-size:var(--fs);line-height:1.55}
+  .shell{position:absolute;inset:0;display:flex;background:var(--bg);overflow:hidden}
+  .main{flex:1 1 auto;display:flex;flex-direction:column;overflow:hidden}
+  .top{flex:none;display:flex;align-items:center;gap:12px;padding:12px var(--pad);background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--pri),#6b9df0);display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px}
+  .ttl b{font-size:16px;font-weight:800;letter-spacing:-.01em}
+  .ttl s{display:block;font-size:10.5px;color:var(--mut);font-weight:600;margin-top:1px}
+  .search{flex:1 1 360px;max-width:580px;margin:0 auto;position:relative}
+  .search input{width:100%;padding:8px 14px 8px 36px;border:1.5px solid var(--line);border-radius:999px;background:#fff;font:inherit;font-size:12.5px;color:var(--ink);outline:none}
+  .search input:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(47,109,246,.1)}
+  .search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-style:normal;color:var(--mut);font-size:13px}
+  .tacts{display:flex;align-items:center;gap:8px;margin-left:auto}
+  .btn{border:0;border-radius:999px;padding:7px 14px;font:inherit;font-weight:700;font-size:11.5px;cursor:pointer;background:var(--pri);color:#fff;box-shadow:0 3px 12px rgba(47,109,246,.25);transition:.16s}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .tabhead{display:flex;align-items:baseline;gap:10px;padding:6px var(--pad) 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .tabhead h2{font-size:15px;font-weight:800;letter-spacing:-.015em;color:var(--ink);margin:0 8px 0 0}
+  .tabhead span{font:700 11px var(--fm);color:var(--pri);background:rgba(47,109,246,.1);padding:2px 8px;border-radius:999px}
+  .body{flex:1 1 auto;min-height:0;display:flex;gap:14px;padding:var(--pad);overflow:hidden}
+  .content{flex:1 1 auto;overflow:auto;padding-top:4px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;align-content:start}
+  .card{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:0 4px 14px rgba(16,24,40,.04);transition:.2s;cursor:pointer;position:relative}
+  .card:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(16,24,40,.08);border-color:#c8d6e8}
+  .card img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#e9eef2;display:block}
+  .card .info{padding:12px 13px 14px}
+  .card h3{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+  .card .badge{font:700 9px var(--fm);padding:2px 7px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+  .badge.chua{background:#fff3e0;color:#b36b00}
+  .badge.tim{background:#e8f6ee;color:var(--green)}
+  .badge.thanh{background:#eef1f4;color:#5a6e75}
+  .card p{font-size:11.5px;color:var(--mut);line-height:1.45;margin-bottom:8px}
+  .card .meta{display:flex;align-items:center;gap:8px;font:700 10.5px var(--fm);color:#8a96a8;flex-wrap:wrap}
+  .drawer{flex:none;width:min(420px,40%);background:#fff;border-left:1px solid var(--line);box-shadow:-12px 0 30px rgba(16,24,40,.06);overflow:auto;padding:22px;display:flex;flex-direction:column;gap:14px}
+  .drawer h2{font-size:16px;font-weight:800;margin-bottom:2px;letter-spacing:-.015em}
+  .drawer .sub{font-size:11.5px;color:var(--mut);font-weight:600}
+  .drawer img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:10px;background:#e9eef2;border:1px solid var(--line)}
+  .drawer .row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}
+  .drawer .lbl{font-weight:700;color:var(--mut);min-width:80px;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+  .drawer .val{font-weight:600;color:var(--ink)}
+  .drawer .timeline{margin-top:8px;padding:12px;background:var(--soft);border-radius:var(--r);font-size:11.5px;line-height:1.65;color:#3a4a50}
+  .drawer .timeline b{display:block;color:var(--ink);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+  .drawer .btnrow{display:flex;gap:8px;margin-top:10px}
+  .drawer .btnrow .btn{flex:1;justify-content:center;text-align:center}
+  @media(max-width:980px){.drawer{position:fixed;inset:0 auto 0 0;width:100%;max-width:420px;z-index:50;transform:translateX(-100%);transition:.3s}.drawer.open{transform:translateX(0)} .drawer .close{display:inline-flex;margin-bottom:8px}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <main class="main">
+    <header class="top">
+      <div class="logo">SPX</div>
+      <div class="ttl"><b>Đơn hàng · Card Grid</b><s>Chọn đơn để xem chi tiết</s></div>
+      <div class="search"><i>🔍</i><input type="text" placeholder="Tìm mã / mô tả…" value="BOX.11-10"></div>
+      <div class="tacts"><button class="btn" onclick="alert('Tạo đơn mới → chọn Box / Item')">+ Tạo</button></div>
+    </header>
+    <div class="tabhead">
+      <h2>Danh sách đơn hàng</h2>
+      <span>8 đơn · 2 trang</span>
+    </div>
+    <div class="body">
+      <section class="content" aria-label="Lưới đơn hàng">
+        <div class="grid">
+          <article class="card" onclick="openDrawer(this)">
+            <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=640&q=80" alt="Thùng hàng" loading="lazy">
+            <div class="info">
+              <h3>BOX.12-10.003 <span class="badge chua">Chưa xử lý</span></h3>
+              <p>Thùng carton 45×32×28 · Mô tả: Đơn SPX từ kho A → kho B, thiếu bill</p>
+              <div class="meta"><span>3h trước</span><span>3 ảnh</span><span>TD</span></div>
+            </div>
+          </article>
+          <article class="card" onclick="openDrawer(this)">
+            <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=640&q=80" alt="Kiện hàng" loading="lazy">
+            <div class="info">
+              <h3>ITEM.12-10.007 <span class="badge chua">Chưa xử lý</span></h3>
+              <p>Kiện nhựa đen · Mô tả: Hàng điện tử, 1 ảnh sản phẩm</p>
+              <div class="meta"><span>5h trước</span><span>1 ảnh</span><span>HN</span></div>
+            </div>
+          </article>
+          <article class="card" onclick="openDrawer(this)">
+            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=640&q=80" alt="Thùng lớn" loading="lazy">
+            <div class="info">
+              <h3>BOX.11-10.015 <span class="badge tim">Tìm bill</span></h3>
+              <p>Thùng gỗ 60×40×35 · Mô tả: Đơn từ đối tác SPX, đã tìm bill #4821</p>
+              <div class="meta"><span>1d trước</span><span>2 ảnh</span><span>TD</span></div>
+            </div>
+          </article>
+          <article class="card" onclick="openDrawer(this)">
+            <img src="https://images.unsplash.com/photo-1566576912321-d58ccc4bc59b?w=640&q=80" alt="Thùng thanh lý" loading="lazy">
+            <div class="info">
+              <h3>BOX.11-10.009 <span class="badge thanh">Thanh lý</span></h3>
+              <p>Thùng carton · Mô tả: Hàng lỗi bao bì, thanh lý theo lô 3 mã</p>
+              <div class="meta"><span>4d trước</span><span>2 ảnh</span><span>HN</span></div>
+            </div>
+          </article>
+          <article class="card" onclick="openDrawer(this)">
+            <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=640&q=80" alt="Thùng tài liệu" loading="lazy">
+            <div class="info">
+              <h3>BOX.10-10.021 <span class="badge chua">Chưa xử lý</span></h3>
+              <p>Thùng giấy A4 · Mô tả: Tài liệu nội bộ, thiếu hóa đơn vận chuyển</p>
+              <div class="meta"><span>6h trước</span><span>2 ảnh</span><span>TD</span></div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <aside class="drawer" id="drawer" aria-label="Chi tiết đơn hàng">
+        <button class="btn ghost close" onclick="document.getElementById('drawer').classList.toggle('open')" style="align-self:flex-start">✕ Đóng</button>
+        <h2>BOX.12-10.003</h2>
+        <p class="sub">Thùng carton 45×32×28 · Tạo: 10:42 · TD</p>
+        <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=640&q=80" alt="Ảnh ngoại quan">
+        <div class="row"><span class="lbl">Mã</span><span class="val">BOX.12-10.003</span></div>
+        <div class="row"><span class="lbl">Loại</span><span class="val">Thùng</span></div>
+        <div class="row"><span class="lbl">Trạng thái</span><span class="val"><span class="badge chua">Chưa xử lý</span></span></div>
+        <div class="row"><span class="lbl">Mô tả</span><span class="val">Đơn SPX từ kho A → kho B, thiếu bill</span></div>
+        <div class="row"><span class="lbl">Ngoại quan</span><span class="val">Thùng carton 45×32×28</span></div>
+        <div class="row"><span class="lbl">Sản phẩm</span><span class="val">Hàng tổng hợp</span></div>
+        <div class="timeline" aria-label="Lịch sử trạng thái">
+          <b>Lịch sử trạng thái</b>
+          <div>• Tạo mới — 10:42 · TD</div>
+          <div>• Chỉnh sửa mô tả — 10:48 · TD</div>
+          <div>• Đang chờ resolve — hiện tại</div>
+        </div>
+        <div class="btnrow">
+          <button class="btn" onclick="alert('Mở form Resolve: nhập bill, xác nhận → ghi timeline')">✓ Resolve</button>
+          <button class="btn ghost" onclick="alert('Sửa mô tả / ghi chú')">✎ Sửa</button>
+          <button class="btn ghost" onclick="alert('In mã QR cho BOX.12-10.003')">🖨 In</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+<script>
+  function openDrawer(card){
+    const drawer = document.getElementById('drawer');
+    drawer.classList.add('open');
+    const title = card.querySelector('h3');
+    const badge = card.querySelector('.badge');
+    if(title && drawer.querySelector('h2')) drawer.querySelector('h2').textContent = title.childNodes[0].textContent.trim();
+  }
+</script>
+</body>
+</html>

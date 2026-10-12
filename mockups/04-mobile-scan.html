@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>04 — Mobile Scan + Tạo nhanh (SPX Mất Bill)</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--pri:#c0392b;--ink:#1a1205;--mut:#6b5a4e;--line:#eaddc7;--soft:#f7f2eb;--card:#fff;--bg:#fdf8f0;--green:#1e7a4e;--blue:#2a6b9e;--amber:#d68a00;--red:#c0392b;--ff:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',monospace;--r:16px;--pad:14px;--fs:14px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#f4ece3;color:var(--ink);font-size:var(--fs);line-height:1.55;-webkit-tap-highlight-color:transparent}
+  .shell{min-height:100vh;background:linear-gradient(180deg,#fdf8f0 0%,#f0ebe4 100%);display:flex;flex-direction:column}
+  header{position:sticky;top:0;z-index:50;background:rgba(253,248,240,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:10px var(--pad);display:flex;align-items:center;gap:10px}
+  header .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--red),#e07a5f);display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;box-shadow:0 3px 10px rgba(192,57,43,.3)}
+  header h1{font-size:15px;font-weight:800;letter-spacing:-.01em}
+  header span{font-size:10.5px;color:var(--mut);font-weight:600}
+  .scan-zone{margin:16px var(--pad);position:relative}
+  .scan-box{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:24px 16px;text-align:center;box-shadow:0 10px 30px rgba(16,12,5,.06);position:relative;overflow:hidden}
+  .scan-box::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--red),#e07a5f,var(--amber))}
+  .scan-box h2{font-size:16px;font-weight:800;margin-bottom:2px}
+  .scan-box p{font-size:12px;color:var(--mut);margin-bottom:14px}
+  .cam-frame{width:100%;aspect-ratio:4/3;background:#1a1205;border-radius:10px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+  .cam-frame img{width:100%;height:100%;object-fit:cover;opacity:.35}
+  .cam-frame .corner{position:absolute;width:24px;height:24px;border:3px solid var(--red);border-radius:6px}
+  .cam-frame .corner.tl{top:10px;left:10px;border-right:0;border-bottom:0}
+  .cam-frame .corner.tr{top:10px;right:10px;border-left:0;border-bottom:0}
+  .cam-frame .corner.bl{bottom:10px;left:10px;border-right:0;border-top:0}
+  .cam-frame .corner.br{bottom:10px;right:10px;border-left:0;border-top:0}
+  .scan-btn{margin-top:14px;background:var(--red);color:#fff;border:0;border-radius:999px;padding:13px 28px;font:inherit;font-weight:700;font-size:14px;box-shadow:0 6px 20px rgba(192,57,43,.35);cursor:pointer;transition:.16s}
+  .scan-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .quick{padding:0 var(--pad) 20px}
+  .quick h3{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);font-weight:800;margin-bottom:10px}
+  .quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .qcard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 12px;box-shadow:0 4px 12px rgba(16,12,5,.04);transition:.18s;cursor:pointer}
+  .qcard:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(16,12,5,.06);border-color:#f0d6c0}
+  .qcard .icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--red),#e07a5f);display:grid;place-items:center;color:#fff;font-size:20px;margin-bottom:8px;box-shadow:0 3px 8px rgba(192,57,43,.25)}
+  .qcard h4{font-size:14px;font-weight:700;margin-bottom:3px}
+  .qcard p{font-size:11px;color:var(--mut)}
+  .section{margin:0 var(--pad) 16px;padding:16px;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:0 6px 18px rgba(16,12,5,.04)}
+  .section h2{font-size:15px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .section h2::before{content:'';width:4px;height:18px;border-radius:3px;background:var(--red)}
+  .form-row{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+  label{font-weight:700;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+  input, select, textarea{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:13px;background:#fff;color:var(--ink);outline:none;transition:.15s}
+  input:focus, select:focus, textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.08)}
+  .btn-full{width:100%;padding:14px;background:var(--red);color:#fff;border:0;border-radius:999px;font:inherit;font-weight:700;font-size:14px;box-shadow:0 6px 20px rgba(192,57,43,.35);cursor:pointer;transition:.16s}
+  .btn-full:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .badge{display:inline-block;padding:3px 8px;border-radius:999px;font:700 10px var(--fm);letter-spacing:.02em}
+  .badge.chua{background:#fff3e0;color:#b36b00}
+  .badge.tim{background:#e8f6ee;color:var(--green)}
+  .badge.ok{background:#e8f6ee;color:var(--green)}
+  .timeline{background:var(--soft);border-radius:10px;padding:12px;font-size:11.5px;line-height:1.6;color:#4a3a2e}
+  .timeline b{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px}
+  @media(min-width:640px){.shell{max-width:480px;margin:0 auto;box-shadow:0 20px 60px rgba(16,12,5,.15);border-radius:18px;overflow:hidden;min-height:100vh}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="logo">SPX</div>
+    <div><h1>Quét & Tạo nhanh</h1><span>Mobile scan · Logictic</span></div>
+  </header>
+
+  <main style="flex:1 1 auto;overflow:auto;padding-bottom:40px">
+    <section class="scan-zone" aria-label="Quét camera">
+      <div class="scan-box">
+        <h2>Quét mã đơn hàng</h2>
+        <p>Quét barcode / QR trên bill hoặc thùng để tìm kiếm</p>
+        <div class="cam-frame" aria-label="Khung camera mô phỏng">
+          <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=640&q=80" alt="Mô phỏng camera" loading="lazy">
+          <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+        </div>
+        <button class="scan-btn" onclick="alert('Bắt đầu quét camera: tìm kiếm đơn theo mã quét → mở chi tiết')">📷 Bắt đầu quét</button>
+      </div>
+    </section>
+
+    <section class="quick" aria-label="Tạo nhanh">
+      <h3>Tạo mới nhanh</h3>
+      <div class="quick-grid">
+        <article class="qcard" onclick="alert('Chọn Box → nhập mô tả, ngoại quan, sản phẩm, thêm ảnh')">
+          <div class="icon">📦</div>
+          <h4>Tạo Box</h4>
+          <p>Thùng / Hộp · 2 ảnh bắt buộc</p>
+        </article>
+        <article class="qcard" onclick="alert('Chọn Item → thêm 1 ảnh sản phẩm bắt buộc')">
+          <div class="icon">📋</div>
+          <h4>Tạo Item</h4>
+          <p>Kiện / Đơn · 1 ảnh sản phẩm</p>
+        </article>
+        <article class="qcard" onclick="alert('Quét camera liên tục cho thanh lý lô')">
+          <div class="icon">⚖</div>
+          <h4>Thanh lý</h4>
+          <p>Quét nhiều mã → nhập lý do lô</p>
+        </article>
+        <article class="qcard" onclick="alert('In mã QR / barcode cho đơn đã tạo')">
+          <div class="icon">🖨</div>
+          <h4>In mã</h4>
+          <p>In từ điện thoại → gửi trạm</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Form tạo mới mô phỏng">
+      <h2>Tạo đơn mới (mô phỏng)</h2>
+      <form onsubmit="event.preventDefault(); alert('Tạo mới: nhập mô tả + ảnh → server cấp mã → confirm → lưu')">
+        <div class="form-row">
+          <label for="kind">Loại đơn</label>
+          <select id="kind"><option>Box (Thùng)</option><option>Item (Kiện)</option></select>
+        </div>
+        <div class="form-row">
+          <label for="desc">Mô tả</label>
+          <textarea id="desc" rows="2" placeholder="Mô tả đơn hàng, nguồn gốc, nội dung…">Đơn SPX từ kho A → kho B, thiếu bill vận chuyển</textarea>
+        </div>
+        <div class="form-row">
+          <label for="outer">Ngoại quan (Box)</label>
+          <input id="outer" type="text" value="Thùng carton 45×32×28 cm" placeholder="Kích thước, chất liệu…">
+        </div>
+        <div class="form-row">
+          <label for="prod">Sản phẩm (Item)</label>
+          <input id="prod" type="text" value="Hàng điện tử tổng hợp" placeholder="Tên sản phẩm…">
+        </div>
+        <div style="margin-bottom:10px">
+          <label>Ảnh mô phỏng (tối đa 3)</label>
+          <div style="display:flex;gap:8px;margin-top:6px;overflow:auto;padding-bottom:4px">
+            <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=200&q=80" alt="Ảnh 1" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--line);flex:none">
+            <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=200&q=80" alt="Ảnh 2" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--line);flex:none">
+            <div style="width:72px;height:72px;border-radius:8px;background:var(--soft);border:2px dashed var(--line);display:grid;place-items:center;color:var(--mut);font-size:20px;flex:none">+</div>
+          </div>
+        </div>
+        <button class="btn-full" onclick="alert('Confirm tạo mới → server cấp mã Box./Item. → hiện Đã tạo ✓ → nút In Mã xuất hiện')">✓ Confirm tạo mới</button>
+      </form>
+    </section>
+
+    <section class="section" aria-label="Danh sách tìm kiếm nhanh">
+      <h2>Tìm kiếm nhanh</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <input type="text" value="BOX.12-10.003" style="flex:1 1 160px;padding:8px 10px;font-size:12px;border-radius:8px;border:1.5px solid var(--line)" onfocus="this.select()">
+        <button class="btn" style="padding:8px 14px;font-size:12px" onclick="alert('Tìm kiếm: giữ lọc, trùng mã mới mở đơn / thanh lý / bill resolve / in mã')">Tìm</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div onclick="alert('Mở chi tiết BOX.12-10.003')" style="padding:10px;background:#fff;border:1px solid var(--line);border-radius:10px;font-size:12.5px;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+          <span><b>BOX.12-10.003</b> · Chưa xử lý</span>
+          <span style="font-size:10px;color:var(--mut);font-family:var(--fm)">3h</span>
+        </div>
+        <div onclick="alert('Mở chi tiết ITEM.12-10.007')" style="padding:10px;background:#fff;border:1px solid var(--line);border-radius:10px;font-size:12.5px;cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+          <span><b>ITEM.12-10.007</b> · Chưa xử lý</span>
+          <span style="font-size:10px;color:var(--mut);font-family:var(--fm)">5h</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

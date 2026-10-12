@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>10 — Full App Combined (SPX Mất Bill)</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--pri:#c0392b;--ink:#0f1a17;--mut:#6b7f72;--line:#dde8e0;--soft:#f2f6f3;--card:#fff;--bg:#f4f7fb;--red:#e34d4d;--green:#11b96a;--amber:#f79009;--blue:#2a6b9e;--ff:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',monospace;--r:14px;--pad:16px;--fs:13px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:#e9eef2;color:var(--ink);font-size:var(--fs);line-height:1.55}
+  .wrap{min-height:100vh;display:flex;flex-direction:column}
+  .shell{position:absolute;inset:0;display:flex;background:var(--bg);overflow:hidden}
+  .side{flex:none;width:250px;background:#fff;border-right:1px solid var(--line);padding:16px 12px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+  .side h2{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);font-weight:800;margin:10px 0 6px 2px}
+  .side h2:first-of-type{margin-top:0}
+  .side a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;font-weight:700;font-size:12.5px;color:#4a5d50;text-decoration:none;transition:.14s}
+  .side a:hover{background:#e8efe9;color:var(--ink)}
+  .side a.on{background:linear-gradient(135deg,rgba(192,57,43,.08),rgba(192,57,43,.04));color:var(--pri);box-shadow:inset 0 0 0 1.5px rgba(192,57,43,.2)}
+  .side a i{width:20px;text-align:center;font-style:normal;font-size:13px;opacity:.85}
+  .main{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+  .top{flex:none;display:flex;align-items:center;gap:12px;padding:10px var(--pad);background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--red),#e07a5f);display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;box-shadow:0 3px 10px rgba(192,57,43,.3)}
+  .ttl b{font-size:16px;font-weight:800;letter-spacing:-.015em}
+  .ttl s{display:block;font-size:10.5px;color:var(--mut);font-weight:600;margin-top:1px}
+  .search{flex:1 1 340px;max-width:580px;margin:0 auto;position:relative}
+  .search input{width:100%;padding:8px 14px 8px 36px;border:1.5px solid var(--line);border-radius:999px;background:#fff;font:inherit;font-size:12.5px;outline:none}
+  .search input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+  .search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-style:normal;color:var(--mut);font-size:13px}
+  .body{flex:1 1 auto;min-height:0;overflow:auto;padding:var(--pad);display:grid;grid-template-columns:repeat(12,1fr);gap:14px;align-content:start}
+  .block{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 4px 14px rgba(10,21,37,.04);overflow:hidden}
+  .block h2{font-size:13px;font-weight:800;margin-bottom:10px;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+  .block h2::before{content:'';width:4px;height:18px;border-radius:3px;background:var(--red)}
+  .dash-block{grid-column:span 4}
+  .card-block{grid-column:span 4}
+  .flow-block{grid-column:span 4}
+  @media(max-width:1200px){.dash-block{grid-column:span 6}.card-block{grid-column:span 6}.flow-block{grid-column:span 12}}
+  @media(max-width:860px){.side{display:none}.body{grid-template-columns:1fr}.dash-block,.card-block,.flow-block{grid-column:span 1}}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+  .tile{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:left;transition:.16s;box-shadow:0 2px 6px rgba(10,21,37,.03)}
+  .tile:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(10,21,37,.06);border-color:#e07a5f}
+  .tile b{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);display:block;margin-bottom:4px}
+  .tile strong{font-family:var(--fm);font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-.03em}
+  .tile s{display:block;margin-top:3px;font-size:10px;color:var(--mut);font-weight:600}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;box-shadow:0 4px 12px rgba(10,21,37,.04);cursor:pointer;transition:.18s}
+  .card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(10,21,37,.08);border-color:#e07a5f}
+  .card img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;background:#e9eef2;margin-bottom:8px;display:block}
+  .card h3{font-size:12px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:4px}
+  .card .badge{font:700 9px var(--fm);padding:2px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+  .badge.chua{background:#fff3e0;color:#b36b00}
+  .badge.tim{background:#e8f6ee;color:var(--green)}
+  .badge.thanh{background:#eef1f4;color:#5a6e75}
+  .card p{font-size:10.5px;color:var(--mut);margin-top:4px;line-height:1.45}
+  .btn{border:0;border-radius:999px;padding:7px 14px;font:inherit;font-weight:700;font-size:11.5px;cursor:pointer;background:var(--red);color:#fff;box-shadow:0 3px 10px rgba(192,57,43,.25);transition:.16s}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 6px 18px rgba(192,57,43,.35)}
+  .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--mut);box-shadow:none}
+  .btn.ghost:hover{border-color:var(--red);color:var(--red)}
+  .steps{display:flex;flex-direction:column;gap:8px}
+  .step{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;transition:.14s;cursor:pointer}
+  .step:hover{border-color:var(--red);box-shadow:0 4px 12px rgba(192,57,43,.06)}
+  .step h4{font-size:12px;font-weight:800;margin-bottom:3px;display:flex;align-items:center;gap:6px}
+  .step h4::before{content:'';width:14px;height:14px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:8px;font-family:var(--fm);font-weight:800}
+  .step p{font-size:11px;color:var(--mut)}
+  .list{display:flex;flex-direction:column;gap:6px}
+  .item{display:flex;align-items:center;gap:8px;padding:8px;background:#fff;border:1px solid var(--line);border-radius:8px;font-size:11.5px;font-weight:600;color:var(--ink);cursor:pointer;transition:.12s}
+  .item:hover{border-color:var(--red);box-shadow:0 2px 8px rgba(192,57,43,.06)}
+  .item time{font-family:var(--fm);font-size:10px;color:var(--mut);margin-left:auto;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">SPX</div>
+    <div class="ttl"><b>Full App · SPX Mất Bill</b><s>Dashboard + Card + Flow + Backlog + Print + Role</s></div>
+    <div class="search"><i>🔍</i><input type="text" placeholder="Tìm kiếm toàn hệ thống…" value="BOX.11-10"></div>
+  </header>
+  <div class="shell">
+    <nav class="side" aria-label="Điều hướng chính">
+      <h2>Quản lý</h2>
+      <a href="#" class="on"><i>▤</i> Tổng quan</a>
+      <a href="#"><i>▦</i> Đơn hàng</a>
+      <a href="#"><i>✎</i> Tạo mới</a>
+      <a href="#"><i>✓</i> Resolve</a>
+      <a href="#"><i>⚖</i> Thanh lý</a>
+      <a href="#"><i>🖨</i> In mã</a>
+      <h2>Hệ thống</h2>
+      <a href="#"><i>💬</i> Góp ý</a>
+      <a href="#"><i>▤</i> Backlog</a>
+      <a href="#"><i>◉</i> Quyền</a>
+      <a href="#"><i>◈</i> Ảnh</a>
+    </nav>
+    <main class="main">
+      <div class="body">
+        <section class="block dash-block" aria-label="Dashboard tổng quan">
+          <h2>Tổng quan · Mất bill</h2>
+          <div class="tiles">
+            <article class="tile" onclick="alert('Chuyển đến Đơn hàng: 24 chưa xử lý')"><b>Chưa xử lý</b><strong>24</strong><s>+3 mới</s></article>
+            <article class="tile" onclick="alert('Chuyển đến Resolve: 7 đã tìm bill')"><b>Tìm bill</b><strong>7</strong><s>2 chờ confirm</s></article>
+            <article class="tile" onclick="alert('Chuyển đến Thanh lý')"><b>Thanh lý</b><strong>5</strong><s>3 lô chờ duyệt</s></article>
+            <article class="tile" onclick="alert('Chuyển đến In mã')"><b>In mã</b><strong>12</strong><s>3 trạm</s></article>
+          </div>
+        </section>
+
+        <section class="block card-block" aria-label="Lưới đơn hàng">
+          <h2>Đơn hàng mới nhất</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;align-content:start">
+            <article class="card" onclick="alert('Mở chi tiết BOX.12-10.003')">
+              <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&q=80" alt="Thùng" loading="lazy">
+              <h3>BOX.12-10.003 <span class="badge chua">Chưa xử lý</span></h3>
+              <p>Thùng carton 45×32· Mô tả: SPX từ A→B, thiếu bill</p>
+            </article>
+            <article class="card" onclick="alert('Mở chi tiết ITEM.12-10.007')">
+              <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=400&q=80" alt="Kiện" loading="lazy">
+              <h3>ITEM.12-10.007 <span class="badge chua">Chưa xử lý</span></h3>
+              <p>Kiện nhựa đen · 1 ảnh sản phẩm</p>
+            </article>
+            <article class="card" onclick="alert('Mở chi tiết BOX.11-10.015')">
+              <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&q=80" alt="Thùng lớn" loading="lazy">
+              <h3>BOX.11-10.015 <span class="badge tim">Tìm bill</span></h3>
+              <p>Thùng carton · Bill #4821</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="block flow-block" aria-label="Luồng chức năng chính">
+          <h2>Luồng chính</h2>
+          <div class="steps" aria-label="Các bước xử lý đơn hàng">
+            <article class="step" onclick="alert('Tạo đơn mới: chọn Box / Item → nhập mô tả + ảnh → Confirm → lưu')">
+              <h4>Tạo mới</h4>
+              <p>Box bắt buộc ngoại quan + sản phẩm. Item bắt buộc 1 ảnh sản phẩm. Mã server cấp.</p>
+            </article>
+            <article class="step" onclick="alert('Quét liên tục → danh sách → nhập lý do + mã lô → Confirm thanh lý')">
+              <h4>Thanh lý</h4>
+              <p>Quét liên tục không đóng camera. Ô Lý do bắt buộc. Confirm ghi timeline đầy đủ.</p>
+            </article>
+            <article class="step" onclick="alert('Tìm kiếm → chi tiết → Resolve → Confirm → timeline trạng thái')">
+              <h4>Resolve</h4>
+              <p>Form bill gọn 1 hàng không label. Confirm ghi giờ·email·token·bill. Đổi trạng thái.</p>
+            </article>
+            <article class="step" onclick="alert('In 1 mã hoặc nhiều mã (giữ chỗ). In từ xa: phone gửi → laptop poll 3s + claim + nghỉ 10s')">
+              <h4>In mã</h4>
+              <p>In 1 mã (scan → tự in). In nhiều (giữ chỗ 10 mã → in cả dãy). Trạm nghỉ 10s.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="block dash-block" aria-label="Hoạt động gần đây và danh sách tìm kiếm" style="grid-column:span 4">
+          <h2>Hoạt động gần đây</h2>
+          <div class="list">
+            <article class="item" onclick="alert('Tạo đơn mới BOX.12-10.003')"><span>Tạo BOX.12-10.003</span><time>10:42</time></article>
+            <article class="item" onclick="alert('Resolve BOX.11-10.001 bill #4821')"><span>Resolve BOX.11-10.001</span><time>10:38</time></article>
+            <article class="item" onclick="alert('In mã ITEM.12-10.007')"><span>In ITEM.12-10.007</span><time>10:35</time></article>
+            <article class="item" onclick="alert('Thanh lý lô 3 mã BOX.11-10.005')"><span>Thanh lý BOX.11-10.005</span><time>10:20</time></article>
+          </div>
+        </section>
+
+        <section class="block card-block" aria-label="Dashboard chi tiết và trạng thái" style="grid-column:span 4">
+          <h2>Backlog · Trạng thái</h2>
+          <table style="width:100%;border-collapse:collapse;font-size:11.5px">
+            <thead>
+              <tr style="border-bottom:1.5px solid var(--line)">
+                <th style="padding:6px 8px;font-weight:700;color:var(--mut);font-size:10px">Mã</th>
+                <th style="padding:6px 8px;font-weight:700;color:var(--mut);font-size:10px">Loại</th>
+                <th style="padding:6px 8px;font-weight:700;color:var(--mut);font-size:10px">Trạng thái</th>
+                <th style="padding:6px 8px;font-weight:700;color:var(--mut);font-size:10px">Tuổi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="alert('BOX.12-10.003')"><td><b>BOX.12-10.003</b></td><td>Thùng</td><td><span class="badge chua">Chưa xử lý</span></td><td>3h</td></tr>
+              <tr onclick="alert('ITEM.12-10.007')"><td><b>ITEM.12-10.007</b></td><td>Kiện</td><td><span class="badge chua">Chưa xử lý</span></td><td>5h</td></tr>
+              <tr onclick="alert('BOX.11-10.015')"><td><b>BOX.11-10.015</b></td><td>Thùng</td><td><span class="badge tim">Tìm bill</span></td><td>1d</td></tr>
+              <tr onclick="alert('BOX.10-10.021')"><td><b>BOX.10-10.021</b></td><td>Thùng</td><td><span class="badge chua">Chưa xử lý</span></td><td>6h</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

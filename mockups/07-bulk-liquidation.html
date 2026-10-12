@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>07 — Bulk Liquidation (SPX Mất Bill)</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--pri:#69788c;--ink:#1a1d23;--mut:#6b7480;--line:#dde1e6;--soft:#f4f5f7;--card:#fff;--bg:#f8f9fb;--red:#e34d4d;--green:#11b96a;--amber:#f79009;--ff:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',monospace;--r:14px;--pad:18px;--fs:13.5px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:1.55}
+  .wrap{min-height:100vh;display:flex;flex-direction:column}
+  .shell{position:absolute;inset:0;display:flex;background:var(--bg);overflow:hidden}
+  header{flex:none;display:flex;align-items:center;gap:12px;padding:12px var(--pad);background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+  header .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#69788c,#8a9aaa);display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px}
+  header h1{font-size:15px;font-weight:800;letter-spacing:-.015em}
+  header span{font-size:10.5px;color:var(--mut);font-weight:600}
+  .main{flex:1 1 auto;min-height:0;display:flex;gap:14px;padding:var(--pad);overflow:hidden}
+  .content{flex:1 1 auto;overflow:auto;display:flex;flex-direction:column;gap:14px}
+  h1{font-size:20px;font-weight:800;margin-bottom:6px;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+  h1::before{content:'';width:5px;height:22px;border-radius:3px;background:var(--pri)}
+  .sub{font-size:12px;color:var(--mut);font-weight:600;margin-bottom:16px}
+  .step-row{display:flex;gap:10px;align-items:stretch;margin-bottom:14px}
+  .step{flex:1;background:#fff;border:1.5px solid var(--line);border-radius:var(--r);padding:14px 14px 12px;box-shadow:0 4px 14px rgba(26,29,35,.04);transition:.18s;position:relative;cursor:pointer}
+  .step:hover{border-color:var(--pri);transform:translateY(-2px);box-shadow:0 12px 28px rgba(26,29,35,.08)}
+  .step .num{position:absolute;top:10px;right:12px;font:800 22px var(--fm);color:#dde1e6;line-height:1}
+  .step h3{font-size:13px;font-weight:800;margin-bottom:4px;letter-spacing:-.01em}
+  .step p{font-size:11.5px;color:var(--mut);line-height:1.5;margin-bottom:8px}
+  .section{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 4px 14px rgba(26,29,35,.03);margin-bottom:14px}
+  .section h2{font-size:13px;font-weight:800;margin-bottom:10px;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+  .section h2::before{content:'';width:4px;height:18px;border-radius:3px;background:var(--pri)}
+  .batch-table{width:100%;border-collapse:collapse;font-size:11.5px}
+  th{font-weight:700;text-align:left;padding:7px 8px;color:var(--mut);border-bottom:1px solid var(--line);font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+  td{padding:8px 8px;border-bottom:1px solid var(--line);font-weight:600;color:var(--ink)}
+  tr:hover td{background:#f4f5f7}
+  .chip{font:700 9px var(--fm);padding:3px 8px;border-radius:999px;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+  .chip.chua{background:#fff3e0;color:#b36b00}
+  .chip.thanh{background:#eef1f4;color:#5a6e75}
+  .form-row{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+  label{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:block}
+  input,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-size:13px;background:#fff;outline:none;transition:.15s}
+  input:focus,textarea:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(105,120,140,.1)}
+  .btn{border:0;border-radius:999px;padding:10px 20px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;background:var(--pri);color:#fff;box-shadow:0 4px 14px rgba(105,120,140,.25);transition:.16s;display:inline-flex;align-items:center;gap:6px}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 8px 24px rgba(105,120,140,.35)}
+  .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--mut);box-shadow:none}
+  .btn.ghost:hover{border-color:var(--pri);color:var(--ink)}
+  .btn.red{background:var(--red);box-shadow:0 4px 14px rgba(227,77,77,.25)}
+  .btn.red:hover{box-shadow:0 8px 24px rgba(227,77,77,.35)}
+  .selected{background:rgba(105,120,140,.08);border-radius:10px;padding:14px;border:1px solid var(--line)}
+  .selected h3{font-size:13px;font-weight:800;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">SPX</div>
+    <h1>Thanh lý theo lô</h1>
+    <span>Chọn nhiều đơn → nhập lý do lô → xác nhận thanh lý</span>
+  </header>
+  <div class="shell">
+    <main class="main">
+      <section class="content">
+        <h1>Thanh lý theo lô (SPX)</h1>
+        <p class="sub">Bước 1: 1 hàng [ô scan | Quét camera] + nút Next ngay dưới → quét liên tục. Bước 2: nhập lý do thanh lý + xác nhận lô.</p>
+
+        <div class="step-row" aria-label="Các bước thanh lý">
+          <article class="step" onclick="alert('Bước 1: quét liên tục không đóng camera → thêm mã vào danh sách')">
+            <span class="num">1</span>
+            <h3>Quét liên tục</h3>
+            <p>Ô scan + Quét camera, nút Next ngay dưới. Quét nhiều mã liên tục không đóng.</p>
+            <button class="btn ghost">Bắt đầu quét</button>
+          </article>
+          <article class="step" onclick="alert('Bước 2: danh sách mã đã quét → xem chi tiết + tổng số')">
+            <span class="num">2</span>
+            <h3>Danh sách mã</h3>
+            <p>Mã Đơn / Loại / Mô tả · có Total + tổng số lượng. Xóa từng mã nếu cần.</p>
+            <button class="btn ghost">Xem danh sách</button>
+          </article>
+          <article class="step" onclick="alert('Bước 3: nhập lý do thanh lý + mã lô → Confirm')">
+            <span class="num">3</span>
+            <h3>Confirm lô</h3>
+            <p>Ô Lý do bắt buộc + mã lô thanh lý. Confirm ghi timeline đầy đủ.</p>
+            <button class="btn ghost">Xác nhận</button>
+          </article>
+        </div>
+
+        <div class="section">
+          <h2>Danh sách mã thanh lý (mô phỏng)</h2>
+          <table class="batch-table" aria-label="Danh sách mã thanh lý">
+            <thead><tr><th>Mã</th><th>Loại</th><th>Mô tả</th><th>Tuổi</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+              <tr onclick="alert('Xóa BOX.11-10.005 khỏi danh sách thanh lý')"><td><b>BOX.11-10.005</b></td><td>Thùng</td><td>Hàng lỗi bao bì</td><td>4d</td><td><span class="chip chua">Chưa xử lý</span></td></tr>
+              <tr onclick="alert('Xóa BOX.11-10.009 khỏi danh sách thanh lý')"><td><b>BOX.11-10.009</b></td><td>Thùng</td><td>Thùng carton cũ</td><td>3d</td><td><span class="chip thanh">Chọn</span></td></tr>
+              <tr onclick="alert('Xóa ITEM.11-10.002 khỏi danh sách')"><td><b>ITEM.11-10.002</b></td><td>Kiện</td><td>Kiện nhựa đen</td><td>5d</td><td><span class="chip thanh">Chọn</span></td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="font-size:12px;color:var(--mut);font-weight:700">Tổng: <b style="font-family:var(--fm);font-size:14px;color:var(--ink);margin-left:4px">3 mã</b></span>
+            <button class="btn red" onclick="alert('Confirm thanh lý lô → nhập lý do + mã lô → ghi timeline → đổi trạng thái Thanh lý')">✓ Confirm thanh lý</button>
+          </div>
+        </div>
+
+        <form class="section" onsubmit="event.preventDefault(); alert('Confirm thanh lý → ghi timeline + đổi trạng thái tất cả mã trong danh sách')">
+          <h2>Confirm thanh lý lô</h2>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div>
+              <label for="liqCode">Mã lô thanh lý</label>
+              <input id="liqCode" type="text" value="LIQ.12-10.001" placeholder="Nhập mã lô thanh lý…">
+            </div>
+            <div>
+              <label for="reasonLiq">Lý do thanh lý</label>
+              <input id="reasonLiq" type="text" value="Hàng lỗi bao bì, không thể vận chuyển tiếp" placeholder="Lý do bắt buộc…">
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn red" type="submit">✓ Confirm thanh lý</button>
+            <button class="btn ghost" onclick="alert('Xóa toàn bộ danh sách và quay lại quét')">✕ Hủy lô</button>
+          </div>
+        </form>
+
+        <div class="selected" aria-label="Chi tiết lô thanh lý đang mở">
+          <h3>BOX.11-10.005 · Thanh lý</h3>
+          <p style="font-size:11.5px;color:var(--mut)">Thùng carton · Mô tả: Hàng lỗi bao bì, thanh lý theo lô 3 mã</p>
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+            <span style="font-family:var(--fm);font-size:11px;color:var(--mut)">Tạo: 11-10 09:00</span>
+            <span style="font-family:var(--fm);font-size:11px;color:#c8a34e">Thanh lý: 12-10 10:20</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+</body>
+</html>

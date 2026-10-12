@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>06 — Resolve Flow (SPX Mất Bill)</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--pri:#2f6df6;--ink:#0f1a17;--mut:#6b7f72;--line:#e2eaf0;--soft:#f2f6fa;--card:#fff;--bg:#f4f7fb;--red:#e34d4d;--green:#11b96a;--amber:#f79009;--ff:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',monospace;--r:14px;--pad:18px;--fs:13.5px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ff);background:var(--bg);color:var(--ink);font-size:var(--fs);line-height:1.55}
+  .wrap{min-height:100vh;display:flex;flex-direction:column}
+  .shell{position:absolute;inset:0;display:flex;background:var(--bg);overflow:hidden}
+  .main{flex:1 1 auto;display:flex;flex-direction:column;overflow:hidden}
+  .top{flex:none;display:flex;align-items:center;gap:12px;padding:12px var(--pad);background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--pri),#2a9d6b);display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px}
+  .ttl b{font-size:16px;font-weight:800;letter-spacing:-.015em}
+  .ttl s{display:block;font-size:10.5px;color:var(--mut);font-weight:600;margin-top:1px}
+  .search{flex:1 1 360px;max-width:580px;margin:0 auto;position:relative}
+  .search input{width:100%;padding:8px 14px 8px 36px;border:1.5px solid var(--line);border-radius:999px;background:#fff;font:inherit;font-size:12.5px;outline:none}
+  .search input:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(47,109,246,.1)}
+  .search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-style:normal;color:var(--mut);font-size:13px}
+  .body{flex:1 1 auto;min-height:0;display:flex;gap:14px;padding:var(--pad);overflow:hidden}
+  .content{flex:1 1 auto;overflow:auto;display:flex;flex-direction:column;gap:14px}
+  .step-row{display:flex;gap:10px;align-items:stretch}
+  .step{flex:1;background:#fff;border:1.5px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 4px 14px rgba(10,21,37,.04);position:relative;transition:.18s}
+  .step:hover{border-color:var(--pri);box-shadow:0 10px 28px rgba(47,109,246,.08);transform:translateY(-2px)}
+  .step .num{position:absolute;top:10px;right:12px;font:800 22px var(--fm);color:#c8d6e8;line-height:1}
+  .step h3{font-size:13px;font-weight:800;margin-bottom:4px;letter-spacing:-.01em}
+  .step p{font-size:11.5px;color:var(--mut);line-height:1.5;margin-bottom:10px}
+  .step .btn{margin-top:auto}
+  .form-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:0 6px 20px rgba(10,21,37,.04)}
+  .form-card h2{font-size:15px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .form-card h2::before{content:'';width:4px;height:20px;border-radius:3px;background:var(--green)}
+  label{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:block}
+  input,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-size:13px;background:#fff;outline:none;transition:.15s}
+  input:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(17,185,106,.08)}
+  .btn{border:0;border-radius:999px;padding:10px 20px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;background:var(--green);color:#fff;box-shadow:0 4px 14px rgba(17,185,106,.3);transition:.16s;display:inline-flex;align-items:center;gap:6px}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 8px 24px rgba(17,185,106,.35)}
+  .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--mut);box-shadow:none}
+  .btn.ghost:hover{border-color:var(--pri);color:var(--pri)}
+  .timeline{background:var(--soft);border-radius:10px;padding:12px;font-size:11.5px;line-height:1.7;color:#3a4a50;margin-top:10px}
+  .timeline b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px}
+  .badge{font:700 9px var(--fm);padding:3px 9px;border-radius:999px;letter-spacing:.03em;text-transform:uppercase}
+  .badge.ok{background:#e8f6ee;color:var(--green)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">SPX</div>
+    <div class="ttl"><b>Resolve Bill · Flow</b><s>Tìm kiếm → Chi tiết → Confirm → Lưu timeline</s></div>
+    <div class="search"><i>🔍</i><input type="text" placeholder="Quét / nhập mã đơn…" value="BOX.11-10.015"></div>
+  </header>
+  <div class="shell">
+    <main class="main">
+      <div class="body">
+        <section class="content">
+          <h1>Luồng Resolve</h1>
+          <p class="sub">Đơn đã tìm bill → nhập mã bill → Confirm → ghi timeline trạng thái.</p>
+
+          <div class="step-row" aria-label="Các bước resolve">
+            <article class="step" onclick="alert('Bước 1: tìm kiếm đơn (scan / ô tìm / giữ lọc)')">
+              <span class="num">1</span>
+              <h3>Tìm kiếm</h3>
+              <p>Quét barcode / QR, nhập mã hoặc giữ lọc. Trùng mã mới → mở đơn / thanh lý / bill resolve.</p>
+              <button class="btn ghost">Tìm đơn</button>
+            </article>
+            <article class="step" onclick="alert('Bước 2: mở chi tiết đơn từ card / bảng')">
+              <span class="num">2</span>
+              <h3>Chi tiết</h3>
+              <p>Card mở drawer phải, ảnh gộp dải ngang 3 cột, timeline đầy đủ giờ·email·token.</p>
+              <button class="btn ghost">Mở chi tiết</button>
+            </article>
+            <article class="step" onclick="alert('Bước 3: bấm Resolve → form 1 dòng không label')">
+              <span class="num">3</span>
+              <h3>Resolve</h3>
+              <p>Nút Resolve gọn sát đáy, form bill gọn 1 hàng không label → Confirm.</p>
+              <button class="btn ghost">Resolve</button>
+            </article>
+            <article class="step" onclick="alert('Bước 4: Confirm ghi timeline + đổi trạng thái')">
+              <span class="num">4</span>
+              <h3>Confirm</h3>
+              <p>Ghi timeline Chi tiết trạng thái đủ giờ·email·token·bill. Đơn xong ẩn Resolve.</p>
+              <button class="btn ghost">Confirm</button>
+            </article>
+          </div>
+
+          <form class="form-card" onsubmit="event.preventDefault(); alert('Confirm Resolve → ghi timeline → đổi trạng thái thành Đã tìm bill → ẩn nút Resolve')">
+            <h2>Confirm Resolve</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div>
+                <label for="bill">Bill # (mã bill)</label>
+                <input id="bill" type="text" value="#4821" placeholder="Nhập mã bill từ hóa đơn…">
+              </div>
+              <div>
+                <label for="reason">Lý do</label>
+                <textarea id="reason" rows="2" placeholder="Lý do tìm được bill…">Bill tìm thấy từ kho vận chuyển SPX, khớp mã sản phẩm và ngày</textarea>
+              </div>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <button class="btn" type="submit">✓ Confirm Resolve</button>
+              <span class="badge ok">Sẵn sàng</span>
+            </div>
+          </form>
+
+          <div class="form-card" aria-label="Chi tiết trạng thái đơn đang mở">
+            <h2>Chi tiết trạng thái — BOX.11-10.015</h2>
+            <div style="font-size:12px;color:#3a4a50;line-height:1.65">
+              <div><b>BOX.11-10.015</b> · Thùng carton · Mô tả: Đơn từ đối tác SPX, đã tìm bill #4821</div>
+              <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+                <span style="font-family:var(--fm);font-size:11px;color:var(--mut)">Tạo: 09-10 14:32</span>
+                <span style="font-family:var(--fm);font-size:11px;color:#c8a34e">Resolve: 10-10 10:20</span>
+              </div>
+            </div>
+            <div class="timeline" aria-label="Lịch sử trạng thái">
+              <b>Timeline trạng thái</b>
+              <div>• Tạo mới — 09-10 14:32 · TD</div>
+              <div>• Chỉnh sửa mô tả — 09-10 15:10 · HN</div>
+              <div>• Đã tìm bill — 10-10 10:20 · TD · bill #4821</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>
