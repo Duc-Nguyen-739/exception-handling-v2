@@ -41,8 +41,8 @@ body{background:#0c1220;font-family:'Be Vietnam Pro',system-ui,-apple-system,'Se
 /* ================= NỀN TẢNG LAYOUT (dùng chung 10 mẫu) ================= */
 .stage{background:#0e1420}
 .shell{
-  --ff:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  --fm:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ff:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',Roboto,'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;
+  --fm:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',monospace;
   --bg:#f5f6f9; --card:#fff; --ink:#22303f; --mut:#8d99a8; --line:#e9edf2; --soft:#f2f5f9;
   --pri:#ee4d2d; --pri-ink:#fff; --acc:#172b48; --green:#11b96a; --blue:#3274f7; --amber:#f79009; --red:#e34d4d;
   --navbg:#fff; --navw:250px; --dw:400px; --r:14px; --r-sm:10px; --pad:16px; --gap:12px; --fs:13.5px;
@@ -337,15 +337,15 @@ tfoot td{padding:9px 10px;background:var(--soft);font-weight:800;font-size:11.5p
 .evb u{text-decoration:none;display:inline-block;margin-top:3px;font-family:var(--fm);font-size:10.5px;font-weight:800;color:var(--green);background:color-mix(in srgb,var(--green) 13%,transparent);padding:2px 6px;border-radius:5px}
 .evb r{display:block;margin-top:3px;font-size:10.5px;color:var(--amber);font-weight:700}
 .dfoot{margin-top:auto;padding-top:6px;border-top:1px solid var(--line)}
-.d-sheet{position:absolute;left:0;right:0;bottom:0;top:auto;width:auto;max-height:86%;border-radius:22px 22px 0 0;border:1px solid var(--line);border-bottom:0;z-index:60;animation:up .28s cubic-bezier(.22,1,.36,1)}
+.d-sheet{position:absolute;left:0;right:0;bottom:0;top:auto;width:min(640px,94%);margin:0 auto;max-height:86%;border-radius:22px 22px 0 0;border:1px solid var(--line);border-bottom:0;z-index:60;animation:up .28s cubic-bezier(.22,1,.36,1)}
 @keyframes up{from{transform:translateY(100%)}}
 .d-modal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(760px,92%);max-height:88%;border-radius:var(--r);border:1px solid var(--line);z-index:60;box-shadow:var(--sh-lg)}
 .ovbg{position:absolute;inset:0;background:rgba(9,14,22,.5);backdrop-filter:blur(3px);z-index:55;animation:fade .2s}
 @keyframes fade{from{opacity:0}}
 
 /* ================= KANBAN ================= */
-.kb{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;align-items:flex-start;flex:1}
-.kbcol{flex:1 0 236px;background:var(--soft);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;max-height:100%}
+.kb{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;align-items:stretch;flex:1;min-height:0}
+.kbcol{flex:1 0 236px;background:var(--soft);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;max-height:100%;min-height:0}
 .kbcol.over{outline:2px dashed var(--pri);outline-offset:-4px;background:color-mix(in srgb,var(--pri) 8%,var(--soft))}
 .kbcol header{display:flex;align-items:center;gap:7px;padding:9px 11px;border-bottom:1px solid var(--line)}
 .kbcol header b{font-size:12px;font-weight:800;color:var(--acc)}.dark .kbcol header b{color:var(--ink)}
@@ -507,7 +507,7 @@ tr.q-failed .mono{color:var(--red)}
 .pbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .pbar b{font-size:12px;font-weight:800;color:var(--pri)}
 .plabels{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px}
-.lbl{width:2in;min-height:1.35in;background:#fff;border:1px solid #d5d9e0;border-radius:8px;padding:8px;display:flex;gap:9px;align-items:center;box-shadow:var(--sh)}
+.lbl{width:2.7in;min-height:1.35in;background:#fff;border:1px solid #d5d9e0;border-radius:8px;padding:8px;display:flex;gap:9px;align-items:center;box-shadow:var(--sh)}
 .lbl svg{flex:none}
 .lbl .ltxt{min-width:0}.lbl b{display:block;font:800 11px/1.25 var(--fm);color:#101820;word-break:break-all}
 .lbl s{display:block;text-decoration:none;font:600 8.5px/1.35 var(--ff);color:#5b6572;margin-top:2px}
@@ -517,7 +517,7 @@ tr.q-failed .mono{color:var(--red)}
 .bl{gap:8px}
 .bl-meta{display:flex;align-items:center;gap:11px;flex-wrap:wrap;font-size:11px;background:var(--soft);border:1px solid var(--line);border-radius:var(--r-sm);padding:7px 11px}
 .bl-meta .upd b,.bl-meta .cnt b{color:var(--pri);font-family:var(--fm)}
-.bl-meta .cnt{margin-left:auto}.bl-meta .subnote{color:var(--mut);font-weight:600;font-size:10px}
+.bl-meta .cnt{margin-left:auto;white-space:nowrap}.bl-meta .subnote{color:var(--mut);font-weight:600;font-size:10px}
 .bl-search{display:flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid color-mix(in srgb,var(--pri) 35%,var(--line));border-radius:999px;padding:3px 5px 3px 12px;max-width:680px;margin:0 auto;width:100%}
 .bl-search input{flex:1;border:0;background:transparent;text-align:center;font-weight:700}
 .bl-search input:focus{box-shadow:none}
@@ -637,11 +637,11 @@ tr s{text-decoration:none;color:var(--mut);font-size:10px}
 .shell.mob .sbox{order:3;flex:1 1 100%}
 .shell.mob .tacts .no{display:none}
 .shell.mob .mob-hide{}
-.shell.mob .d-sheet{width:auto}
 /* Mobile: panel drawer/inline luôn tràn màn → chuyển thành sheet đáy, không ép 2 cột */
 .shell.mob .drawer{position:absolute;left:0;right:0;top:auto;bottom:0;width:auto;max-height:86%;border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;z-index:60;box-shadow:var(--sh-lg);animation:up .28s cubic-bezier(.22,1,.36,1)}
 .shell.mob .drawer.empty-d{display:none}
 .shell.mob .d-modal{left:0;right:0;top:auto;bottom:0;transform:none;width:auto;max-height:92%;border-radius:22px 22px 0 0;border-bottom:0}
+.shell.mob .pager{position:static;margin-top:6px}
 .shell.mob .tabhead s{display:none}
 .bnav{flex:none;display:none;justify-content:space-around;align-items:center;background:var(--navbg);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));position:absolute;left:0;right:0;bottom:0;z-index:40;backdrop-filter:blur(12px)}
 .shell.mob .bnav{display:flex}
@@ -692,7 +692,9 @@ tr s{text-decoration:none;color:var(--mut);font-size:10px}
 .shell.v1 .kbcard:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--pri)}
 .shell.v1 .st{border:1.5px solid #14181f;border-radius:2;background:#fffdf7;color:#14181f;font-weight:800}
 .shell.v1 .age{border:1.5px solid #14181f;box-shadow:2px 2px 0 rgba(20,24,31,.5)}
-.shell.v1 .tnv{font-family:'Space Grotesk';font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:11.5px}
+.shell.v1 .tnv{font-family:'Space Grotesk';font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:11.5px;padding:11px 16px}
+.shell.v1 .tnv+.tnv{border-left:2px solid #14181f}
+.shell.v1 .topnav{border-bottom:2px solid #14181f}
 .shell.v1 .tabhead h2{font-family:'Space Grotesk';text-transform:uppercase;letter-spacing:.03em}
 .shell.v1 .chip,.shell.v1 .pager,.shell.v1 .pane,.shell.v1 .tile,.shell.v1 .chart,.shell.v1 .live,.shell.v1 .agesum{border:2px solid #14181f;box-shadow:3px 3px 0 #14181f;border-radius:2px}
 .shell.v1 .chip.on{background:#14181f;color:#fff}
@@ -917,7 +919,7 @@ tr s{text-decoration:none;color:var(--mut);font-size:10px}
 .shell.v10 .chip.on{background:rgba(167,139,250,.28);border-color:#a78bfa;color:#fff}
 .shell.v10 .side{background:rgba(255,255,255,.05);backdrop-filter:blur(20px);border-color:rgba(255,255,255,.12)}
 .shell.v10 .nv.on{background:rgba(167,139,250,.22);color:#fff}
-.shell.v10 .brand b{color:#fff}.shell.v10 .brand s{color:#a78bfa}
+.shell.v10 .brand b{color:#fff}.shell.v10 .brand s{color:#c9b8ff}
 .shell.v10 input,.shell.v10 select,.shell.v10 textarea{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16);color:#f2f5fd}
 .shell.v10 .dinfo,.shell.v10 .prev,.shell.v10 .lot,.shell.v10 .whoami{background:rgba(255,255,255,.05)}
 .shell.v10.dens-compact{--fs:12.4px;--r:14px;--r-sm:10px;--pad:12px;--grid:repeat(auto-fill,minmax(170px,1fr))}
@@ -2096,7 +2098,7 @@ function printSheetHtml(){
   return '<div class="psheet"><div class="pbar"><b>Tem 4x6in (khổ in thật) — '+App.printCodes.length+' tem</b>'+
     '<button class="btn mini pri" data-act="doPrint">🖨 In ('+(isPhone()?'gửi trạm in':'window.print')+')</button>'+
     '<button class="btn mini ghost" data-act="closePrint">Đóng</button></div>'+
-    '<div class="plabels">'+App.printCodes.map(function(c){ return labelHtml(c); }).join('')+'</div></div>';
+    '<div class="plabels">'+(App.printCodes||[]).map(function(c){ return labelHtml(c); }).join('')+'</div></div>';
 }
 function scanModal(){
   if(!App.scan) return '';
