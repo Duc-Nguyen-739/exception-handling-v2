@@ -51,7 +51,7 @@ body{background:#0c1220;font-family:'Be Vietnam Pro',system-ui,-apple-system,'Se
   position:absolute; inset:0; display:flex; background:var(--bg); color:var(--ink); font:400 var(--fs)/1.5 var(--ff); overflow:hidden;
 }
 .shell *{scrollbar-width:thin}
-.shell button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+.shell button:not(.btn){font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
 .shell input,.shell select,.shell textarea{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 10px;outline:none;min-width:0}
 .shell input:focus,.shell select:focus,.shell textarea:focus{border-color:var(--pri);box-shadow:0 0 0 3px color-mix(in srgb,var(--pri) 18%,transparent)}
 .shell code,.mono{font-family:var(--fm);font-size:.94em}
@@ -67,7 +67,7 @@ body{background:#0c1220;font-family:'Be Vietnam Pro',system-ui,-apple-system,'Se
 .dempty b{display:block;color:var(--ink);font-size:14px;margin-bottom:6px}
 
 /* ---- nút ---- */
-.btn{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 14px;font-weight:700;font-size:12.5px;color:var(--acc);
+.btn{font-family:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 14px;font-weight:700;font-size:12.5px;color:var(--acc);
   display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:.16s;box-shadow:0 1px 2px rgba(16,24,40,.05)}
 .btn:hover{transform:translateY(-1px);box-shadow:var(--sh);border-color:color-mix(in srgb,var(--pri) 40%,var(--line))}
 .btn.pri{background:var(--pri);border-color:var(--pri);color:var(--pri-ink);box-shadow:0 4px 14px color-mix(in srgb,var(--pri) 34%,transparent)}
@@ -291,7 +291,7 @@ tfoot td{padding:9px 10px;background:var(--soft);font-weight:800;font-size:11.5p
 .skelwrap{display:grid;grid-template-columns:var(--grid);gap:10px}
 .skel{height:150px;border-radius:var(--r);background:linear-gradient(90deg,var(--soft) 25%,var(--line) 37%,var(--soft) 63%);background-size:400% 100%;animation:sk 1.2s infinite linear}
 @keyframes sk{to{background-position:-400% 0}}
-<style id="comp">
+/* ================= MỞ ĐẦU KHỐI COMP ================= */
 /* ================= CHI TIẾT + TAB CHỨC NĂNG ================= */
 .dwrap{display:flex;flex-direction:column;gap:12px;padding:14px}
 .dhead{display:flex;align-items:flex-start;gap:10px;position:sticky;top:-14px;margin:-14px -14px 0;padding:14px;background:var(--card);border-bottom:1px solid var(--line);z-index:4}
@@ -652,6 +652,7 @@ tr s{text-decoration:none;color:var(--mut);font-size:10px}
 .bn.fab i{font-size:24px}
 
 /* ================= IN TEM ================= */
+@media (max-width:1100px){.sbox kbd{display:none}.top{gap:10px}.tacts{gap:6px}}
 @media print{
   .gal,.picks{display:none!important}
   body{background:#fff}
@@ -666,7 +667,7 @@ tr s{text-decoration:none;color:var(--mut);font-size:10px}
   .printarea .lbl b{font-size:30px!important}
   @page{size:4in 6in portrait;margin:.1in}
 }
-<style id="skins">
+/* ================= MỞ ĐẦU KHỐI SKINS ================= */
 /* =====================================================================
    10 SKIN — mỗi mẫu: bảng màu + hình thái layout riêng
    ===================================================================== */
